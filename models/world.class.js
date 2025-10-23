@@ -11,6 +11,7 @@ class World {
     this.keyboard = keyboard;
     this.draw();
     this.setWorld();
+    this.checkCollisions();
   }
 
   draw() {
@@ -32,17 +33,39 @@ class World {
 
   addToMap(movableObject) {
     if (movableObject.otherDirection) {
-      this.ctx.save();
-      this.ctx.translate(movableObject.x + movableObject.width, movableObject.y);
-      this.ctx.scale(-1, 1);
-      this.ctx.drawImage(movableObject.img, 0, 0, movableObject.width, movableObject.height);
-      this.ctx.restore();
-    } else {
-      this.ctx.drawImage(movableObject.img, movableObject.x, movableObject.y, movableObject.width, movableObject.height);
+      this.flipImage(movableObject);
     }
+    movableObject.draw(this.ctx);
+    movableObject.drawFrame(this.ctx);
+    if (movableObject.otherDirection) {
+      this.flipImageBack(movableObject);
+    }
+  }
+
+  flipImage(movableObject) {
+    this.ctx.save();
+    this.ctx.translate(movableObject.width, 0);
+    this.ctx.scale(-1, 1);
+    movableObject.x = movableObject.x * -1;
+  }
+
+  flipImageBack(movableObject) {
+    movableObject.x = movableObject.x * -1;
+    this.ctx.restore();
   }
 
   setWorld() {
     this.character.world = this;
+  }
+
+  checkCollisions() {
+    setInterval(() => {
+      this.level.enemies.forEach((enemy) => {
+        if (this.character.isColliding(enemy)) {
+          console.log(this.character.energy);
+          this.character.hit();
+        }
+      });
+    }, 200);
   }
 }
