@@ -1,0 +1,1 @@
+class Salsabar extends Statusbar {}
