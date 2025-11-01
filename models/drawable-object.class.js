@@ -27,9 +27,18 @@ class DrawableObject {
   drawFrame(ctx) {
     if (this instanceof Character || this instanceof Chicken) {
       ctx.beginPath();
-      ctx.lineWidth = "4";
+      ctx.lineWidth = "2";
       ctx.strokeStyle = "blue";
       ctx.rect(this.x, this.y, this.width, this.height);
+      ctx.stroke();
+    }
+    if (this instanceof Coin) {
+      ctx.beginPath();
+      ctx.lineWidth = "3";
+      ctx.strokeStyle = "blue";
+      const centerX = this.x + this.width / 2;
+      const centerY = this.y + this.height / 2;
+      ctx.arc(centerX, centerY, 25, 0, 2 * Math.PI);
       ctx.stroke();
     }
   }
