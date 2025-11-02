@@ -9,6 +9,7 @@ class World {
   coinbar = new Coinbar();
   salsabar = new Salsabar();
   throwableObjects = [];
+  allCoins = this.level.coins.length;
 
   constructor(canvas, keyboard) {
     this.canvas = canvas;
@@ -92,8 +93,8 @@ class World {
     this.level.coins.forEach((coin, index) => {
       if (this.character.isColliding(coin)) {
         this.character.collectCoin();
-        this.coinbar.setPercentage(this.character.coins);
         this.level.coins.splice(index, 1);
+        this.updateCoinbar();
       }
     });
   }
@@ -103,5 +104,10 @@ class World {
       let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 100);
       this.throwableObjects.push(bottle);
     }
+  }
+
+  updateCoinbar() {
+    const percentage = (this.character.coins / this.allCoins) * 100;
+    this.coinbar.setPercentage(percentage);
   }
 }
