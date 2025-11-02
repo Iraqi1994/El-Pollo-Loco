@@ -34,7 +34,7 @@ class DrawableObject {
     }
     if (this instanceof Coin) {
       ctx.beginPath();
-      ctx.lineWidth = "3";
+      ctx.lineWidth = "2";
       ctx.strokeStyle = "blue";
       const centerX = this.x + this.width / 2;
       const centerY = this.y + this.height / 2;

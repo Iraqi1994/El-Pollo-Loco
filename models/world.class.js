@@ -74,7 +74,8 @@ class World {
   run() {
     setInterval(() => {
       this.checkCollisions();
-      this.checkThrowObjects();
+      this.checkThrowableObjects();
+      this.checkCollectibles();
     }, 200);
   }
 
@@ -87,7 +88,17 @@ class World {
     });
   }
 
-  checkThrowObjects() {
+  checkCollectibles() {
+    this.level.coins.forEach((coin, index) => {
+      if (this.character.isColliding(coin)) {
+        this.character.collectCoin();
+        this.coinbar.setPercentage(this.character.coins);
+        this.level.coins.splice(index, 1);
+      }
+    });
+  }
+
+  checkThrowableObjects() {
     if (this.keyboard.D) {
       let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 100);
       this.throwableObjects.push(bottle);
