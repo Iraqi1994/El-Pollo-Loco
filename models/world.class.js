@@ -10,6 +10,7 @@ class World {
   salsabar = new Salsabar();
   throwableObjects = [];
   allCoins = this.level.coins.length;
+  maxBottles = 5;
 
   constructor(canvas, keyboard) {
     this.canvas = canvas;
@@ -34,6 +35,7 @@ class World {
     this.addToMap(this.character);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.coins);
+    this.addObjectsToMap(this.level.throwableObjects);
     this.addObjectsToMap(this.throwableObjects);
     this.ctx.translate(-this.camera_x, 0);
     requestAnimationFrame(() => this.draw());
@@ -77,7 +79,7 @@ class World {
       this.checkCollisions();
       this.checkThrowableObjects();
       this.checkCollectibles();
-    }, 200);
+    }, 100);
   }
 
   checkCollisions() {
@@ -97,17 +99,31 @@ class World {
         this.updateCoinbar();
       }
     });
+
+    this.level.throwableObjects.forEach((bottle, index) => {
+      if (this.character.isColliding(bottle) && this.character.bottles < this.maxBottles) {
+        this.character.collectBottle();
+        this.level.throwableObjects.splice(index, 1);
+        this.updateSalsabar();
+      }
+    });
   }
 
   checkThrowableObjects() {
     if (this.keyboard.D) {
       let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 100);
       this.throwableObjects.push(bottle);
+      console.log(this.throwableObjects);
     }
   }
 
   updateCoinbar() {
     const percentage = (this.character.coins / this.allCoins) * 100;
     this.coinbar.setPercentage(percentage);
+  }
+
+  updateSalsabar() {
+    const percentage = (this.character.bottles / this.maxBottles) * 100;
+    this.salsabar.setPercentage(percentage);
   }
 }

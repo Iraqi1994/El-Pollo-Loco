@@ -7,7 +7,7 @@ class ThrowableObject extends MovableObject {
     this.y = y;
     this.height = 80;
     this.width = 60;
-    this.throw();
+    // Don't automatically throw - only throw when explicitly called
   }
 
   throw() {
