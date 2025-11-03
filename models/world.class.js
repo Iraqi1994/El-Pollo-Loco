@@ -11,6 +11,8 @@ class World {
   throwableObjects = [];
   allCoins = this.level.coins.length;
   maxBottles = 5;
+  lastThrowTime = 0;
+  throwCooldown = 500;
 
   constructor(canvas, keyboard) {
     this.canvas = canvas;
@@ -110,10 +112,14 @@ class World {
   }
 
   checkThrowableObjects() {
-    if (this.keyboard.D) {
+    const currentTime = Date.now();
+    if (this.keyboard.D && this.character.bottles > 0 && currentTime - this.lastThrowTime > this.throwCooldown) {
       let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 100);
+      bottle.throw();
       this.throwableObjects.push(bottle);
-      console.log(this.throwableObjects);
+      this.character.bottles--;
+      this.updateSalsabar();
+      this.lastThrowTime = currentTime;
     }
   }
 
