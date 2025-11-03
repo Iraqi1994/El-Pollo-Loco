@@ -39,11 +39,16 @@ class MovableObject extends DrawableObject {
   }
 
   jump() {
-    this.speedY = 30;
+    this.speedY = 25;
   }
 
   isColliding(movableObject) {
-    return this.x + this.width > movableObject.x && this.y + this.height > movableObject.y && this.x < movableObject.x + movableObject.width && this.y < movableObject.y + movableObject.height;
+    return (
+      this.x + this.width > movableObject.x &&
+      this.y + this.height > movableObject.y &&
+      this.x < movableObject.x + movableObject.width &&
+      this.y < movableObject.y + movableObject.height
+    );
   }
 
   hit() {

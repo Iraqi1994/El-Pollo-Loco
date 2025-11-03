@@ -54,6 +54,8 @@ class Character extends MovableObject {
   }
 
   animate() {
+    let wasAboveGround = false;
+
     setInterval(() => {
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.moveRight();
@@ -68,6 +70,12 @@ class Character extends MovableObject {
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
       }
+
+      if (wasAboveGround && !this.isAboveGround()) {
+        this.img = this.imageCache[this.IMAGES_WALKING[0]];
+        this.currentImage = 0;
+      }
+      wasAboveGround = this.isAboveGround();
 
       this.world.camera_x = -this.x + 70;
     }, 1000 / 60);
@@ -88,7 +96,7 @@ class Character extends MovableObject {
       if (this.isAboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
-    }, 200);
+    }, 125);
   }
 
   collectCoin() {
