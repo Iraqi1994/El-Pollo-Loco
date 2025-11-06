@@ -43,12 +43,29 @@ class MovableObject extends DrawableObject {
   }
 
   isColliding(movableObject) {
+    if (movableObject instanceof Coin) {
+      return this.isCollidingWithCircle(movableObject);
+    }
     return (
-      this.x + this.width > movableObject.x &&
-      this.y + this.height > movableObject.y &&
-      this.x < movableObject.x + movableObject.width &&
-      this.y < movableObject.y + movableObject.height
+      this.x + this.width - this.offset.right > movableObject.x + movableObject.offset.left &&
+      this.y + this.height - this.offset.bottom > movableObject.y + movableObject.offset.top &&
+      this.x + this.offset.left < movableObject.x + movableObject.width - movableObject.offset.right &&
+      this.y + this.offset.top < movableObject.y + movableObject.height - movableObject.offset.top
     );
+  }
+
+  isCollidingWithCircle(coin) {
+    const charCenterX = this.x + this.offset.left + (this.width - this.offset.left - this.offset.right) / 2;
+    const charCenterY = this.y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) / 2;
+    const coinCenterX = coin.x + coin.width / 2;
+    const coinCenterY = coin.y + coin.height / 2;
+    const coinRadius = coin.width / 2 - coin.coinOffset;
+    const distanceX = charCenterX - coinCenterX;
+    const distanceY = charCenterY - coinCenterY;
+    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+    const charRadius = Math.min(this.width - this.offset.left - this.offset.right, this.height - this.offset.top - this.offset.bottom) / 2;
+
+    return distance < coinRadius + charRadius;
   }
 
   hit() {
