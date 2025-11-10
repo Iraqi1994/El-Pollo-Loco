@@ -81,12 +81,16 @@ class World {
       this.checkCollisions();
       this.checkThrowableObjects();
       this.checkCollectibles();
+      this.removeDeadEnemies();
     }, 100);
   }
 
   checkCollisions() {
     this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
+      if ((enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead && this.character.isJumpingOn(enemy)) {
+        enemy.die();
+        this.character.jump();
+      } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead) {
         this.character.hit();
         this.healthbar.setPercentage(this.character.energy);
       }
@@ -131,5 +135,15 @@ class World {
   updateSalsabar() {
     const percentage = (this.character.bottles / this.maxBottles) * 100;
     this.salsabar.setPercentage(percentage);
+  }
+
+  removeDeadEnemies() {
+    this.level.enemies = this.level.enemies.filter((enemy) => {
+      if ((enemy instanceof Chicken || enemy instanceof Chick) && enemy.chickenIsDead) {
+        const timeSinceDeath = Date.now() - enemy.deathTime;
+        return timeSinceDeath < 1000;
+      }
+      return true;
+    });
   }
 }

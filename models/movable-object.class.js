@@ -54,6 +54,20 @@ class MovableObject extends DrawableObject {
     );
   }
 
+  isJumpingOn(enemy) {
+    const characterBottom = this.y + this.height - this.offset.bottom;
+    const enemyTop = enemy.y + enemy.offset.top;
+    const enemyTopThreshold = enemy.y + enemy.offset.top + enemy.height * 0.5;
+
+    return (
+      this.speedY < 0 &&
+      characterBottom > enemyTop &&
+      characterBottom < enemyTopThreshold &&
+      this.x + this.width - this.offset.right > enemy.x + enemy.offset.left &&
+      this.x + this.offset.left < enemy.x + enemy.width - enemy.offset.right
+    );
+  }
+
   isCollidingWithCircle(coin) {
     const charCenterX = this.x + this.offset.left + (this.width - this.offset.left - this.offset.right) / 2;
     const charCenterY = this.y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) / 2;
