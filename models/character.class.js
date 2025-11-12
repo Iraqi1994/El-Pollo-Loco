@@ -56,6 +56,7 @@ class Character extends MovableObject {
 
   animate() {
     let wasAboveGround = false;
+    let wasHurt = false;
 
     setInterval(() => {
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -86,7 +87,13 @@ class Character extends MovableObject {
         this.playAnimation(this.IMAGES_DEAD);
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
+        wasHurt = true;
       } else {
+        if (wasHurt) {
+          this.img = this.imageCache[this.IMAGES_WALKING[0]];
+          this.currentImage = 0;
+          wasHurt = false;
+        }
         if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
           this.playAnimation(this.IMAGES_WALKING);
         }
