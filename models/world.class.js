@@ -82,7 +82,7 @@ class World {
       this.checkThrowableObjects();
       this.checkCollectibles();
       this.removeDeadEnemies();
-    }, 100);
+    }, 1000 / 60);
   }
 
   checkCollisions() {

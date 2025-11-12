@@ -55,14 +55,11 @@ class MovableObject extends DrawableObject {
   }
 
   isJumpingOn(enemy) {
-    const characterBottom = this.y + this.height - this.offset.bottom;
-    const enemyTop = enemy.y + enemy.offset.top;
-    const enemyTopThreshold = enemy.y + enemy.offset.top + enemy.height * 0.5;
-
     return (
       this.speedY < 0 &&
-      characterBottom > enemyTop &&
-      characterBottom < enemyTopThreshold &&
+      this.isAboveGround() &&
+      this.y + this.height - this.offset.bottom > enemy.y + enemy.offset.top &&
+      this.y + this.height - this.offset.bottom < enemy.y + enemy.height * 0.6 &&
       this.x + this.width - this.offset.right > enemy.x + enemy.offset.left &&
       this.x + this.offset.left < enemy.x + enemy.width - enemy.offset.right
     );
