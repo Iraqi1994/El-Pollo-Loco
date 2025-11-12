@@ -81,7 +81,9 @@ class World {
       this.checkCollisions();
       this.checkThrowableObjects();
       this.checkCollectibles();
+      this.checkBottleEnemyCollisions();
       this.removeDeadEnemies();
+      this.removeSplashedBottles();
     }, 1000 / 60);
   }
 
@@ -142,6 +144,34 @@ class World {
       if ((enemy instanceof Chicken || enemy instanceof Chick) && enemy.chickenIsDead) {
         const timeSinceDeath = Date.now() - enemy.deathTime;
         return timeSinceDeath < 1000;
+      }
+      return true;
+    });
+  }
+
+  checkBottleEnemyCollisions() {
+    this.throwableObjects.forEach((bottle) => {
+      this.level.enemies.forEach((enemy) => {
+        if (!bottle.isSplashing && bottle.isColliding(enemy)) {
+          bottle.splash();
+          if ((enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead) {
+            enemy.die();
+          } else if (enemy instanceof Endboss) {
+            enemy.energy -= 20;
+            if (enemy.energy <= 0) {
+              enemy.energy = 0;
+            }
+          }
+        }
+      });
+    });
+  }
+
+  removeSplashedBottles() {
+    this.throwableObjects = this.throwableObjects.filter((bottle) => {
+      if (bottle.isSplashing) {
+        const timeSinceSplash = Date.now() - bottle.splashStartTime;
+        return timeSinceSplash < 300;
       }
       return true;
     });
