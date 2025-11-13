@@ -92,8 +92,8 @@ class World {
       if ((enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead && this.character.isJumpingOn(enemy)) {
         enemy.die();
         this.character.jump();
-      } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead) {
-        this.character.hit();
+      } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt()) {
+        this.character.hit(5);
         this.healthbar.setPercentage(this.character.energy);
       }
     });

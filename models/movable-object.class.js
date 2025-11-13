@@ -79,8 +79,9 @@ class MovableObject extends DrawableObject {
     return distance < coinRadius + charRadius;
   }
 
-  hit() {
-    this.energy -= 0.0005;
+  hit(damage) {
+    this.energy -= damage;
+    console.log(this.energy);
     if (this.energy < 0) {
       this.energy = 0;
     } else {
