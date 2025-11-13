@@ -145,6 +145,10 @@ class World {
         const timeSinceDeath = Date.now() - enemy.deathTime;
         return timeSinceDeath < 1000;
       }
+      if (enemy instanceof Endboss && enemy.isDead() && enemy.deathAnimationFinished) {
+        const timeSinceDeath = Date.now() - enemy.deathTime;
+        return timeSinceDeath < 1000;
+      }
       return true;
     });
   }
@@ -157,10 +161,7 @@ class World {
           if ((enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead) {
             enemy.die();
           } else if (enemy instanceof Endboss) {
-            enemy.energy -= 20;
-            if (enemy.energy <= 0) {
-              enemy.energy = 0;
-            }
+            enemy.hit(20);
           }
         }
       });

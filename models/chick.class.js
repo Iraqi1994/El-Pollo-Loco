@@ -8,8 +8,7 @@ class Chick extends MovableObject {
   deathTime = 0;
 
   constructor(x) {
-    super();
-    this.loadImage("../img/3_enemies_chicken/chicken_small/1_walk/1_w.png");
+    super().loadImage("../img/3_enemies_chicken/chicken_small/1_walk/1_w.png");
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.offset = { top: 5, right: 10, bottom: 0, left: 10 };
