@@ -23,11 +23,7 @@ class Character extends MovableObject {
     "../img/2_character_pepe/3_jump/J-39.png",
   ];
 
-  IMAGES_HURT = [
-    "../img/2_character_pepe/4_hurt/H-41.png",
-    "../img/2_character_pepe/4_hurt/H-42.png",
-    "../img/2_character_pepe/4_hurt/H-43.png",
-  ];
+  IMAGES_HURT = ["../img/2_character_pepe/4_hurt/H-41.png", "../img/2_character_pepe/4_hurt/H-42.png", "../img/2_character_pepe/4_hurt/H-43.png"];
 
   IMAGES_DEAD = [
     "../img/2_character_pepe/5_dead/D-51.png",
@@ -64,7 +60,7 @@ class Character extends MovableObject {
         this.otherDirection = false;
       }
 
-      if (this.world.keyboard.LEFT && this.x > 0) {
+      if (this.world.keyboard.LEFT && this.x > this.getLeftBoundary()) {
         this.moveLeft();
         this.otherDirection = true;
       }
@@ -113,5 +109,15 @@ class Character extends MovableObject {
 
   collectBottle() {
     this.bottles++;
+  }
+
+  getLeftBoundary() {
+    const endboss = this.world.level.enemies.find((enemy) => enemy instanceof Endboss);
+    if (!endboss) return 0;
+    const bossFullyVisibleAt = endboss.x + endboss.width - 720;
+    if (this.x >= bossFullyVisibleAt) {
+      return bossFullyVisibleAt;
+    }
+    return 0;
   }
 }

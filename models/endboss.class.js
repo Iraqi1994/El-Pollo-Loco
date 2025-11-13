@@ -1,7 +1,8 @@
 class Endboss extends MovableObject {
-  height = 400;
-  width = 250;
-  y = 70;
+  height = 300;
+  width = 200;
+  y = 150;
+  speed = 5;
   deathAnimationFinished = false;
   deathAnimationStarted = false;
   deathTime = 0;
@@ -73,5 +74,9 @@ class Endboss extends MovableObject {
         this.deathTime = Date.now();
       }
     }
+  }
+
+  attack() {
+    this.playAnimation(this.IMAGES_ATTACK);
   }
 }
