@@ -84,6 +84,7 @@ class World {
       this.checkBottleEnemyCollisions();
       this.removeDeadEnemies();
       this.removeSplashedBottles();
+      this.checkBossActivation();
     }, 1000 / 60);
   }
 
@@ -179,5 +180,15 @@ class World {
       }
       return true;
     });
+  }
+
+  checkBossActivation() {
+    const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
+    if (endboss && !endboss.isActivated) {
+      const bossFullyVisibleAt = endboss.x + endboss.width - 720;
+      if (this.character.x >= bossFullyVisibleAt) {
+        endboss.activate();
+      }
+    }
   }
 }

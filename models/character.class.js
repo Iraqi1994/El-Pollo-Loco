@@ -114,9 +114,8 @@ class Character extends MovableObject {
   getLeftBoundary() {
     const endboss = this.world.level.enemies.find((enemy) => enemy instanceof Endboss);
     if (!endboss) return 0;
-    const bossFullyVisibleAt = endboss.x + endboss.width - 720;
-    if (this.x >= bossFullyVisibleAt) {
-      return bossFullyVisibleAt;
+    if (endboss.isActivated) {
+      return endboss.leftBoundary;
     }
     return 0;
   }

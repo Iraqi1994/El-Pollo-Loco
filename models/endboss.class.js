@@ -6,6 +6,10 @@ class Endboss extends MovableObject {
   deathAnimationFinished = false;
   deathAnimationStarted = false;
   deathTime = 0;
+  isActivated = false;
+  movingRight = false;
+  leftBoundary = 0;
+  rightBoundary = 3500;
 
   IMAGES_WALKING = ["../img/4_enemie_boss_chicken/1_walk/G1.png", "../img/4_enemie_boss_chicken/1_walk/G2.png", "../img/4_enemie_boss_chicken/1_walk/G3.png", "../img/4_enemie_boss_chicken/1_walk/G4.png"];
 
@@ -45,6 +49,7 @@ class Endboss extends MovableObject {
     this.offset = { top: 50, right: 25, bottom: 30, left: 20 };
     this.x = 3300;
     this.animate();
+    this.startMoving();
   }
 
   animate() {
@@ -54,10 +59,41 @@ class Endboss extends MovableObject {
       } else if (this.isDead() && this.deathAnimationFinished) {
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
+      } else if (this.isActivated && !this.isDead()) {
+        this.playAnimation(this.IMAGES_WALKING);
       } else if (!this.isDead()) {
         this.playAnimation(this.IMAGES_ALERT);
       }
     }, 200);
+  }
+
+  startMoving() {
+    setInterval(() => {
+      if (!this.isDead() && this.isActivated) {
+        if (this.movingRight) {
+          this.moveRight();
+          this.otherDirection = true;
+          if (this.x >= this.rightBoundary) {
+            this.movingRight = false;
+          }
+        } else {
+          this.moveLeft();
+          this.otherDirection = false;
+          if (this.x <= this.leftBoundary) {
+            this.movingRight = true;
+          }
+        }
+      }
+    }, 1000 / 60);
+  }
+
+  activate() {
+    if (!this.isActivated) {
+      this.leftBoundary = this.x + this.width - 720;
+      setTimeout(() => {
+        this.isActivated = true;
+      }, 1000);
+    }
   }
 
   playDeathAnimation(images) {
