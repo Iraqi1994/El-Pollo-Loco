@@ -1,7 +1,7 @@
 class Endboss extends MovableObject {
-  height = 300;
-  width = 200;
-  y = 150;
+  height = 250;
+  width = 180;
+  y = 200;
   speed = 5;
   deathAnimationFinished = false;
   deathAnimationStarted = false;
