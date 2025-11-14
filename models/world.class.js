@@ -165,10 +165,11 @@ class World {
     this.throwableObjects.forEach((bottle) => {
       this.level.enemies.forEach((enemy) => {
         if (!bottle.isSplashing && bottle.isColliding(enemy)) {
-          bottle.splash();
           if ((enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead) {
+            bottle.splash();
             enemy.die();
-          } else if (enemy instanceof Endboss) {
+          } else if (enemy instanceof Endboss && enemy.isActivated) {
+            bottle.splash();
             enemy.hit(20);
           }
         }
