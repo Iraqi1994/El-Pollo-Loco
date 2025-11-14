@@ -10,6 +10,9 @@ class Endboss extends MovableObject {
   movingRight = false;
   leftBoundary = 0;
   rightBoundary = 3500;
+  isAttacking = false;
+  attackAnimationStarted = false;
+  attackStartTime = 0;
 
   IMAGES_WALKING = ["../img/4_enemie_boss_chicken/1_walk/G1.png", "../img/4_enemie_boss_chicken/1_walk/G2.png", "../img/4_enemie_boss_chicken/1_walk/G3.png", "../img/4_enemie_boss_chicken/1_walk/G4.png"];
 
@@ -57,6 +60,8 @@ class Endboss extends MovableObject {
       if (this.isDead() && !this.deathAnimationFinished) {
         this.playDeathAnimation(this.IMAGES_DEAD);
       } else if (this.isDead() && this.deathAnimationFinished) {
+      } else if (this.isAttacking) {
+        this.playAttackAnimation();
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       } else if (this.isActivated && !this.isDead()) {
@@ -69,17 +74,19 @@ class Endboss extends MovableObject {
 
   startMoving() {
     setInterval(() => {
-      if (!this.isDead() && this.isActivated) {
+      if (!this.isDead() && this.isActivated && !this.isAttacking) {
         if (this.movingRight) {
           this.moveRight();
           this.otherDirection = true;
           if (this.x >= this.rightBoundary) {
+            this.startAttack();
             this.movingRight = false;
           }
         } else {
           this.moveLeft();
           this.otherDirection = false;
           if (this.x <= this.leftBoundary) {
+            this.startAttack();
             this.movingRight = true;
           }
         }
@@ -112,7 +119,29 @@ class Endboss extends MovableObject {
     }
   }
 
-  attack() {
-    this.playAnimation(this.IMAGES_ATTACK);
+  startAttack() {
+    if (!this.isAttacking) {
+      this.isAttacking = true;
+      this.attackAnimationStarted = false;
+      this.attackStartTime = Date.now();
+      this.currentImage = 0;
+    }
+  }
+
+  playAttackAnimation() {
+    if (!this.attackAnimationStarted) {
+      this.currentImage = 0;
+      this.attackAnimationStarted = true;
+    }
+
+    const animationDuration = this.IMAGES_ATTACK.length * 200 * 2;
+    const timeSinceAttackStart = Date.now() - this.attackStartTime;
+
+    if (timeSinceAttackStart < animationDuration) {
+      this.playAnimation(this.IMAGES_ATTACK);
+    } else {
+      this.isAttacking = false;
+      this.attackAnimationStarted = false;
+    }
   }
 }
