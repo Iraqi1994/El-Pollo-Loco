@@ -9,7 +9,7 @@ class Endboss extends MovableObject {
   isActivated = false;
   movingRight = false;
   leftBoundary = 0;
-  rightBoundary = 3500;
+  rightBoundary = 0;
   isAttacking = false;
   attackAnimationStarted = false;
   attackStartTime = 0;
@@ -78,7 +78,7 @@ class Endboss extends MovableObject {
         if (this.movingRight) {
           this.moveRight();
           this.otherDirection = true;
-          if (this.x >= this.rightBoundary) {
+          if (this.x + this.width >= this.rightBoundary) {
             this.startAttack();
             this.movingRight = false;
           }
@@ -94,9 +94,10 @@ class Endboss extends MovableObject {
     }, 1000 / 60);
   }
 
-  activate() {
+  activate(cameraX) {
     if (!this.isActivated) {
-      this.leftBoundary = this.x + this.width - 720;
+      this.leftBoundary = -cameraX;
+      this.rightBoundary = -cameraX + 720;
       setTimeout(() => {
         this.isActivated = true;
       }, 1000);

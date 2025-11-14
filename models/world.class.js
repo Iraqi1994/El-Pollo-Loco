@@ -13,6 +13,8 @@ class World {
   maxBottles = 5;
   lastThrowTime = 0;
   throwCooldown = 500;
+  isBossActive = false;
+  bossRoomCameraX = 0;
 
   constructor(canvas, keyboard) {
     this.canvas = canvas;
@@ -187,7 +189,9 @@ class World {
     if (endboss && !endboss.isActivated) {
       const bossFullyVisibleAt = endboss.x + endboss.width - 720;
       if (this.character.x >= bossFullyVisibleAt) {
-        endboss.activate();
+        this.isBossActive = true;
+        this.bossRoomCameraX = this.camera_x;
+        endboss.activate(this.bossRoomCameraX);
       }
     }
   }

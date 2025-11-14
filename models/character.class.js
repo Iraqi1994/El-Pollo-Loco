@@ -55,7 +55,7 @@ class Character extends MovableObject {
     let wasHurt = false;
 
     setInterval(() => {
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+      if (this.world.keyboard.RIGHT && this.x + this.width - this.offset.right < this.getRightBoundary()) {
         this.moveRight();
         this.otherDirection = false;
       }
@@ -75,7 +75,9 @@ class Character extends MovableObject {
       }
       wasAboveGround = this.isAboveGround();
 
-      this.world.camera_x = -this.x + 70;
+      if (!this.world.isBossActive) {
+        this.world.camera_x = -this.x + 70;
+      }
     }, 1000 / 60);
 
     setInterval(() => {
@@ -115,8 +117,17 @@ class Character extends MovableObject {
     const endboss = this.world.level.enemies.find((enemy) => enemy instanceof Endboss);
     if (!endboss) return 0;
     if (endboss.isActivated) {
-      return endboss.leftBoundary;
+      return endboss.leftBoundary - this.offset.left;
     }
     return 0;
+  }
+
+  getRightBoundary() {
+    const endboss = this.world.level.enemies.find((enemy) => enemy instanceof Endboss);
+    if (!endboss) return this.world.level.level_end_x;
+    if (endboss.isActivated) {
+      return endboss.rightBoundary;
+    }
+    return this.world.level.level_end_x;
   }
 }
