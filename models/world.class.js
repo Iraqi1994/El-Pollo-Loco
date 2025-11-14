@@ -96,7 +96,7 @@ class World {
       } else if (enemy instanceof Endboss && this.character.isJumpingOn(enemy) && !enemy.isDead()) {
         enemy.hit(20);
         this.character.speedY = 15;
-      } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt()) {
+      } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead())) {
         this.character.hit(5);
         this.healthbar.setPercentage(this.character.energy);
       }
