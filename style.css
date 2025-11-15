@@ -30,6 +30,78 @@ h1 {
   text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 }
 
+h2 {
+  letter-spacing: 3px;
+}
+
+.start-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 720px;
+  min-height: 480px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.start-content {
+  text-align: center;
+  color: white;
+}
+
+.start-content h2 {
+  font-size: 48px;
+  margin-bottom: 30px;
+  color: #ffd700;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+.start-button {
+  cursor: pointer;
+  width: 200px;
+  height: auto;
+  margin: 20px 0;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.start-button:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.start-button:active {
+  transform: scale(0.95);
+}
+
+.instructions {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 30px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  letter-spacing: 2px;
+}
+
+.instructions h3 {
+  font-size: 32px;
+  margin-bottom: 15px;
+  color: #ffd700;
+}
+
+.instructions p {
+  font-size: 20px;
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.instructions strong {
+  color: #ffd700;
+  font-size: 22px;
+}
+
 @media only screen and (max-width: 720px) {
   canvas {
     width: 100%;

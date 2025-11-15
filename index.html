@@ -34,9 +34,24 @@
     <script src="models/world.class.js"></script>
     <script src="scripts/game.js"></script>
   </head>
-  <body onload="init();">
+  <body>
     <h1>El Pollo Loco</h1>
 
-    <canvas id="canvas" width="720" height="480"></canvas>
+    <!-- Start Screen -->
+    <div id="startScreen" class="start-screen">
+      <div class="start-content">
+        <h2>Welcome to El Pollo Loco!</h2>
+        <img src="./img/startscreen/start_game_new.svg" alt="Start Game" id="startButton" class="start-button" />
+        <div class="instructions">
+          <h3>How to Play:</h3>
+          <p><strong>← →</strong> Move left/right</p>
+          <p><strong>SPACE</strong> Jump</p>
+          <p><strong>D</strong> Throw bottle</p>
+          <p>Collect coins and bottles, defeat chickens, and beat the boss!</p>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="canvas" width="720" height="480" style="display: none"></canvas>
   </body>
 </html>

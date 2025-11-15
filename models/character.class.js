@@ -55,45 +55,49 @@ class Character extends MovableObject {
     let wasHurt = false;
 
     setInterval(() => {
-      if (this.world.keyboard.RIGHT && this.x + this.width - this.offset.right < this.getRightBoundary()) {
-        this.moveRight();
-        this.otherDirection = false;
-      }
+      if (gameActive) {
+        if (this.world.keyboard.RIGHT && this.x + this.width - this.offset.right < this.getRightBoundary()) {
+          this.moveRight();
+          this.otherDirection = false;
+        }
 
-      if (this.world.keyboard.LEFT && this.x > this.getLeftBoundary()) {
-        this.moveLeft();
-        this.otherDirection = true;
-      }
+        if (this.world.keyboard.LEFT && this.x > this.getLeftBoundary()) {
+          this.moveLeft();
+          this.otherDirection = true;
+        }
 
-      if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump();
-      }
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+          this.jump();
+        }
 
-      if (wasAboveGround && !this.isAboveGround()) {
-        this.img = this.imageCache[this.IMAGES_WALKING[0]];
-        this.currentImage = 0;
-      }
-      wasAboveGround = this.isAboveGround();
+        if (wasAboveGround && !this.isAboveGround()) {
+          this.img = this.imageCache[this.IMAGES_WALKING[0]];
+          this.currentImage = 0;
+        }
+        wasAboveGround = this.isAboveGround();
 
-      if (!this.world.isBossActive) {
-        this.world.camera_x = -this.x + 70;
+        if (!this.world.isBossActive) {
+          this.world.camera_x = -this.x + 70;
+        }
       }
     }, 1000 / 60);
 
     setInterval(() => {
-      if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
-      } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
-        wasHurt = true;
-      } else {
-        if (wasHurt) {
-          this.img = this.imageCache[this.IMAGES_WALKING[0]];
-          this.currentImage = 0;
-          wasHurt = false;
-        }
-        if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
-          this.playAnimation(this.IMAGES_WALKING);
+      if (gameActive) {
+        if (this.isDead()) {
+          this.playAnimation(this.IMAGES_DEAD);
+        } else if (this.isHurt()) {
+          this.playAnimation(this.IMAGES_HURT);
+          wasHurt = true;
+        } else {
+          if (wasHurt) {
+            this.img = this.imageCache[this.IMAGES_WALKING[0]];
+            this.currentImage = 0;
+            wasHurt = false;
+          }
+          if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
+            this.playAnimation(this.IMAGES_WALKING);
+          }
         }
       }
     }, 50);

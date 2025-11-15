@@ -59,24 +59,26 @@ class Endboss extends MovableObject {
 
   animate() {
     setInterval(() => {
-      if (this.isDead() && !this.deathAnimationFinished) {
-        this.playDeathAnimation(this.IMAGES_DEAD);
-      } else if (this.isDead() && this.deathAnimationFinished) {
-      } else if (this.isAttacking) {
-        this.playAttackAnimation();
-      } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
-      } else if (this.isActivated && !this.isDead()) {
-        this.playAnimation(this.IMAGES_WALKING);
-      } else if (!this.isDead()) {
-        this.playAnimation(this.IMAGES_ALERT);
+      if (gameActive) {
+        if (this.isDead() && !this.deathAnimationFinished) {
+          this.playDeathAnimation(this.IMAGES_DEAD);
+        } else if (this.isDead() && this.deathAnimationFinished) {
+        } else if (this.isAttacking) {
+          this.playAttackAnimation();
+        } else if (this.isHurt()) {
+          this.playAnimation(this.IMAGES_HURT);
+        } else if (this.isActivated && !this.isDead()) {
+          this.playAnimation(this.IMAGES_WALKING);
+        } else if (!this.isDead()) {
+          this.playAnimation(this.IMAGES_ALERT);
+        }
       }
     }, 200);
   }
 
   startMoving() {
     setInterval(() => {
-      if (!this.isDead() && this.isActivated && !this.isAttacking) {
+      if (gameActive && !this.isDead() && this.isActivated && !this.isAttacking) {
         if (this.movingRight) {
           this.moveRight();
           this.otherDirection = true;

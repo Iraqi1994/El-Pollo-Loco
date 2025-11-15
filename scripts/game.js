@@ -1,13 +1,29 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let gameStarted = false;
+let gameActive = false;
 
 const init = () => {
   canvas = document.getElementById("canvas");
-  world = new World(canvas, keyboard);
+  const startButton = document.getElementById("startButton");
+  startButton.addEventListener("click", startGame);
 };
 
+const startGame = () => {
+  if (gameStarted) return;
+
+  gameStarted = true;
+  gameActive = true;
+
+  document.getElementById("startScreen").style.display = "none";
+  canvas.style.display = "block";
+  world = new World(canvas, keyboard);
+};
+window.addEventListener("load", init);
 document.addEventListener("keydown", (e) => {
+  if (!gameStarted) return;
+
   if (e.code == "ArrowRight") {
     keyboard.RIGHT = true;
   }
@@ -29,6 +45,8 @@ document.addEventListener("keydown", (e) => {
 });
 
 document.addEventListener("keyup", (e) => {
+  if (!gameStarted) return;
+
   if (e.code == "ArrowRight") {
     keyboard.RIGHT = false;
   }

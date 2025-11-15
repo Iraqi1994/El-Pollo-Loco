@@ -19,15 +19,17 @@ class Chick extends MovableObject {
 
   animate() {
     setInterval(() => {
-      if (!this.chickenIsDead) {
+      if (gameActive && !this.chickenIsDead) {
         this.moveLeft();
       }
     }, 1000 / 60);
     setInterval(() => {
-      if (this.chickenIsDead) {
-        this.playAnimation(this.IMAGES_DEAD);
-      } else {
-        this.playAnimation(this.IMAGES_WALKING);
+      if (gameActive) {
+        if (this.chickenIsDead) {
+          this.playAnimation(this.IMAGES_DEAD);
+        } else {
+          this.playAnimation(this.IMAGES_WALKING);
+        }
       }
     }, 200);
   }
