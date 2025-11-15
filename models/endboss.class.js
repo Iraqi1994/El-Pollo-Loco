@@ -13,6 +13,7 @@ class Endboss extends MovableObject {
   isAttacking = false;
   attackAnimationStarted = false;
   attackStartTime = 0;
+  hasDealtDamage = false;
 
   IMAGES_WALKING = ["../img/4_enemie_boss_chicken/1_walk/G1.png", "../img/4_enemie_boss_chicken/1_walk/G2.png", "../img/4_enemie_boss_chicken/1_walk/G3.png", "../img/4_enemie_boss_chicken/1_walk/G4.png"];
 
@@ -51,6 +52,7 @@ class Endboss extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.offset = { top: 50, right: 25, bottom: 30, left: 20 };
     this.x = 3300;
+    this.world = null;
     this.animate();
     this.startMoving();
   }
@@ -126,6 +128,7 @@ class Endboss extends MovableObject {
       this.attackAnimationStarted = false;
       this.attackStartTime = Date.now();
       this.currentImage = 0;
+      this.hasDealtDamage = false;
     }
   }
 
@@ -140,9 +143,28 @@ class Endboss extends MovableObject {
 
     if (timeSinceAttackStart < animationDuration) {
       this.playAnimation(this.IMAGES_ATTACK);
+      const damageWindow = 200 * 4;
+      if (!this.hasDealtDamage && timeSinceAttackStart >= damageWindow && timeSinceAttackStart < damageWindow + 200) {
+        if (this.isCharacterInFront()) {
+          this.world.character.hit(20);
+          this.world.healthbar.setPercentage(this.world.character.energy);
+          this.hasDealtDamage = true;
+        }
+      }
     } else {
       this.isAttacking = false;
       this.attackAnimationStarted = false;
+    }
+  }
+
+  isCharacterInFront() {
+    if (!this.world) return false;
+    const character = this.world.character;
+    const attackRange = 150;
+    if (this.otherDirection) {
+      return character.x > this.x && character.x < this.x + this.width + attackRange;
+    } else {
+      return character.x + character.width > this.x - attackRange && character.x < this.x;
     }
   }
 }
