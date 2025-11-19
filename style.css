@@ -117,3 +117,55 @@ h2 {
     display: none;
   }
 }
+
+.fullscreen-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.fullscreen-button:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.fullscreen-button:active {
+  transform: scale(0.95);
+}
+
+#canvasContainer {
+  position: relative;
+  display: inline-block;
+}
+
+#canvasContainer:fullscreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#canvasContainer:fullscreen canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100vw;
+  max-height: 100vh;
+  object-fit: contain;
+}
+
+#canvasContainer:fullscreen .fullscreen-button {
+  position: absolute;
+  bottom: calc(50% - min(50vh, 50vw * 480 / 720) + 20px);
+  right: calc(50% - min(50vw, 50vh * 720 / 480) + 20px);
+  z-index: 100;
+}

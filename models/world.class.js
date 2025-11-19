@@ -103,7 +103,12 @@ class World {
       } else if (enemy instanceof Endboss && this.character.isJumpingOn(enemy) && !enemy.isDead()) {
         enemy.hit(20);
         this.character.speedY = 15;
-      } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead())) {
+      } else if (
+        this.character.isColliding(enemy) &&
+        !enemy.chickenIsDead &&
+        !this.character.isHurt() &&
+        !(enemy instanceof Endboss && enemy.isDead())
+      ) {
         this.character.hit(5);
         this.healthbar.setPercentage(this.character.energy);
       }
@@ -154,11 +159,10 @@ class World {
 
   removeDeadEnemies() {
     this.level.enemies = this.level.enemies.filter((enemy) => {
-      if ((enemy instanceof Chicken || enemy instanceof Chick) && enemy.chickenIsDead) {
-        const timeSinceDeath = Date.now() - enemy.deathTime;
-        return timeSinceDeath < 1000;
-      }
-      if (enemy instanceof Endboss && enemy.isDead() && enemy.deathAnimationFinished) {
+      const isChickenDead = (enemy instanceof Chicken || enemy instanceof Chick) && enemy.chickenIsDead;
+      const isBossDead = enemy instanceof Endboss && enemy.isDead() && enemy.deathAnimationFinished;
+
+      if (isChickenDead || isBossDead) {
         const timeSinceDeath = Date.now() - enemy.deathTime;
         return timeSinceDeath < 1000;
       }

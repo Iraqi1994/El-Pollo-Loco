@@ -7,7 +7,14 @@ let gameActive = false;
 const init = () => {
   canvas = document.getElementById("canvas");
   const startButton = document.getElementById("startButton");
+  const fullscreenButton = document.getElementById("fullscreenButton");
+  const exitFullscreenButton = document.getElementById("exitFullscreenButton");
+
   startButton.addEventListener("click", startGame);
+  fullscreenButton.addEventListener("click", enterFullscreen);
+  exitFullscreenButton.addEventListener("click", exitFullscreen);
+
+  document.addEventListener("fullscreenchange", handleFullscreenChange);
 };
 
 const startGame = () => {
@@ -17,8 +24,42 @@ const startGame = () => {
   gameActive = true;
 
   document.getElementById("startScreen").style.display = "none";
-  canvas.style.display = "block";
+  document.getElementById("canvasContainer").style.display = "block";
   world = new World(canvas, keyboard);
+};
+
+const enterFullscreen = () => {
+  const container = document.getElementById("canvasContainer");
+  if (container.requestFullscreen) {
+    container.requestFullscreen();
+  } else if (container.webkitRequestFullscreen) {
+    container.webkitRequestFullscreen();
+  } else if (container.msRequestFullscreen) {
+    container.msRequestFullscreen();
+  }
+};
+
+const exitFullscreen = () => {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
+};
+
+const handleFullscreenChange = () => {
+  const fullscreenButton = document.getElementById("fullscreenButton");
+  const exitFullscreenButton = document.getElementById("exitFullscreenButton");
+
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+    fullscreenButton.style.display = "none";
+    exitFullscreenButton.style.display = "block";
+  } else {
+    fullscreenButton.style.display = "block";
+    exitFullscreenButton.style.display = "none";
+  }
 };
 window.addEventListener("load", init);
 document.addEventListener("keydown", (e) => {
