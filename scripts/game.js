@@ -9,12 +9,14 @@ const init = () => {
   const startButton = document.getElementById("startButton");
   const instructionsButton = document.getElementById("instructionsButton");
   const backButton = document.getElementById("backButton");
+  const restartButton = document.getElementById("restartButton");
   const fullscreenButton = document.getElementById("fullscreenButton");
   const exitFullscreenButton = document.getElementById("exitFullscreenButton");
 
   startButton.addEventListener("click", startGame);
   instructionsButton.addEventListener("click", showInstructions);
   backButton.addEventListener("click", showMainMenu);
+  restartButton.addEventListener("click", restartGame);
   fullscreenButton.addEventListener("click", enterFullscreen);
   exitFullscreenButton.addEventListener("click", exitFullscreen);
 
@@ -40,6 +42,35 @@ const startGame = () => {
   document.getElementById("startScreen").style.display = "none";
   document.getElementById("canvasContainer").style.display = "block";
   world = new World(canvas, keyboard);
+};
+
+const restartGame = () => {
+  gameStarted = false;
+  gameActive = false;
+  world = null;
+
+  document.getElementById("endingScreen").style.display = "none";
+  document.getElementById("canvasContainer").style.display = "none";
+  document.getElementById("startScreen").style.display = "flex";
+  showMainMenu();
+};
+
+const showEndingScreen = (won) => {
+  gameActive = false;
+
+  const endingImage = document.getElementById("endingImage");
+  if (won) {
+    endingImage.src = "./img/You won, you lost/You won A.png";
+    endingImage.alt = "You Won!";
+  } else {
+    endingImage.src = "./img/You won, you lost/Game over A.png";
+    endingImage.alt = "Game Over";
+  }
+
+  setTimeout(() => {
+    document.getElementById("canvasContainer").style.display = "none";
+    document.getElementById("endingScreen").style.display = "flex";
+  }, 1000);
 };
 
 const enterFullscreen = () => {

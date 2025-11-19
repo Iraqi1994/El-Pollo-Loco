@@ -92,6 +92,7 @@ class World {
       this.removeDeadEnemies();
       this.removeSplashedBottles();
       this.checkBossActivation();
+      this.checkGameEnd();
     }, 1000 / 60);
   }
 
@@ -205,6 +206,17 @@ class World {
         this.bossRoomCameraX = this.camera_x;
         endboss.activate(this.bossRoomCameraX);
       }
+    }
+  }
+
+  checkGameEnd() {
+    if (this.character.isDead() && gameActive) {
+      showEndingScreen(false);
+    }
+
+    const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
+    if (endboss && endboss.isDead() && endboss.deathAnimationFinished && gameActive) {
+      showEndingScreen(true);
     }
   }
 }
