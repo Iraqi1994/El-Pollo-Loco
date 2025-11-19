@@ -7,14 +7,28 @@ let gameActive = false;
 const init = () => {
   canvas = document.getElementById("canvas");
   const startButton = document.getElementById("startButton");
+  const instructionsButton = document.getElementById("instructionsButton");
+  const backButton = document.getElementById("backButton");
   const fullscreenButton = document.getElementById("fullscreenButton");
   const exitFullscreenButton = document.getElementById("exitFullscreenButton");
 
   startButton.addEventListener("click", startGame);
+  instructionsButton.addEventListener("click", showInstructions);
+  backButton.addEventListener("click", showMainMenu);
   fullscreenButton.addEventListener("click", enterFullscreen);
   exitFullscreenButton.addEventListener("click", exitFullscreen);
 
   document.addEventListener("fullscreenchange", handleFullscreenChange);
+};
+
+const showInstructions = () => {
+  document.getElementById("mainMenu").style.display = "none";
+  document.getElementById("instructionsView").style.display = "block";
+};
+
+const showMainMenu = () => {
+  document.getElementById("mainMenu").style.display = "block";
+  document.getElementById("instructionsView").style.display = "none";
 };
 
 const startGame = () => {

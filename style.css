@@ -50,6 +50,12 @@ h2 {
   color: white;
 }
 
+#mainMenu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 .start-content h2 {
   font-size: 48px;
   margin-bottom: 30px;
@@ -71,6 +77,29 @@ h2 {
 }
 
 .start-button:active {
+  transform: scale(0.95);
+}
+
+.menu-button {
+  cursor: pointer;
+  padding: 15px 40px;
+  font-size: 24px;
+  font-family: "zabars", Arial, Helvetica, sans-serif;
+  background-color: #ffd700;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  margin: 10px 0;
+  transition: transform 0.2s, filter 0.2s;
+  letter-spacing: 2px;
+}
+
+.menu-button:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.menu-button:active {
   transform: scale(0.95);
 }
 

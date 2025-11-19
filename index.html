@@ -37,17 +37,25 @@
   <body>
     <h1>El Pollo Loco</h1>
 
-    <!-- Start Screen -->
+    <!-- Start Screen - Main Menu -->
     <div id="startScreen" class="start-screen">
       <div class="start-content">
         <h2>Welcome to El Pollo Loco!</h2>
-        <img src="./img/startscreen/start_game_new.svg" alt="Start Game" id="startButton" class="start-button" />
-        <div class="instructions">
+        <div id="mainMenu">
+          <img src="./img/startscreen/instructions.png" alt="Instructions" id="instructionsButton" class="start-button" />
+          <img src="./img/startscreen/start_game_new.svg" alt="Start Game" id="startButton" class="start-button" />
+        </div>
+        <div id="instructionsView" class="instructions" style="display: none">
           <h3>How to Play:</h3>
           <p><strong>← →</strong> Move left/right</p>
           <p><strong>SPACE</strong> Jump</p>
           <p><strong>D</strong> Throw bottle</p>
           <p>Collect coins and bottles, defeat chickens, and beat the boss!</p>
+          <h3 style="margin-top: 25px">Endboss Tips:</h3>
+          <p>The endboss can be damaged by jumping on it and throwing salsa bottles</p>
+          <p>The endboss needs 5 hits to die</p>
+          <p>The boss is not hittable while attacking</p>
+          <button id="backButton" class="menu-button" style="margin-top: 20px">Back</button>
         </div>
       </div>
     </div>
