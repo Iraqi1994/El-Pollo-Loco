@@ -24,13 +24,13 @@ const init = () => {
 };
 
 const showInstructions = () => {
-  document.getElementById("mainMenu").style.display = "none";
-  document.getElementById("instructionsView").style.display = "block";
+  document.getElementById("mainMenu").classList.add("hidden");
+  document.getElementById("instructionsView").classList.remove("hidden");
 };
 
 const showMainMenu = () => {
-  document.getElementById("mainMenu").style.display = "block";
-  document.getElementById("instructionsView").style.display = "none";
+  document.getElementById("mainMenu").classList.remove("hidden");
+  document.getElementById("instructionsView").classList.add("hidden");
 };
 
 const startGame = () => {
@@ -39,8 +39,8 @@ const startGame = () => {
   gameStarted = true;
   gameActive = true;
 
-  document.getElementById("startScreen").style.display = "none";
-  document.getElementById("canvasContainer").style.display = "block";
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("canvasContainer").classList.remove("hidden");
   world = new World(canvas, keyboard);
 };
 
@@ -49,9 +49,9 @@ const restartGame = () => {
   gameActive = false;
   world = null;
 
-  document.getElementById("endingScreen").style.display = "none";
-  document.getElementById("canvasContainer").style.display = "none";
-  document.getElementById("startScreen").style.display = "flex";
+  document.getElementById("endingScreen").classList.add("hidden");
+  document.getElementById("canvasContainer").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
   showMainMenu();
 };
 
@@ -68,8 +68,8 @@ const showEndingScreen = (won) => {
   }
 
   setTimeout(() => {
-    document.getElementById("canvasContainer").style.display = "none";
-    document.getElementById("endingScreen").style.display = "flex";
+    document.getElementById("canvasContainer").classList.add("hidden");
+    document.getElementById("endingScreen").classList.remove("hidden");
   }, 1000);
 };
 
@@ -99,11 +99,11 @@ const handleFullscreenChange = () => {
   const exitFullscreenButton = document.getElementById("exitFullscreenButton");
 
   if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-    fullscreenButton.style.display = "none";
-    exitFullscreenButton.style.display = "block";
+    fullscreenButton.classList.add("hidden");
+    exitFullscreenButton.classList.remove("hidden");
   } else {
-    fullscreenButton.style.display = "block";
-    exitFullscreenButton.style.display = "none";
+    fullscreenButton.classList.remove("hidden");
+    exitFullscreenButton.classList.add("hidden");
   }
 };
 window.addEventListener("load", init);

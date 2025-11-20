@@ -45,39 +45,33 @@
           <img src="./img/startscreen/instructions.png" alt="Instructions" id="instructionsButton" class="start-button" />
           <img src="./img/startscreen/start_game_new.svg" alt="Start Game" id="startButton" class="start-button" />
         </div>
-        <div id="instructionsView" class="instructions" style="display: none">
+        <div id="instructionsView" class="instructions hidden">
           <h3>How to Play:</h3>
           <p><strong>← →</strong> Move left/right</p>
           <p><strong>SPACE</strong> Jump</p>
           <p><strong>D</strong> Throw bottle</p>
           <p>Collect coins and bottles, defeat chickens, and beat the boss!</p>
-          <h3 style="margin-top: 25px">Endboss Tips:</h3>
+          <h3 class="instructions-title-spacing">Endboss Tips:</h3>
           <p>The endboss can be damaged by jumping on it and throwing salsa bottles</p>
           <p>The endboss needs 5 hits to die</p>
           <p>The boss is not hittable while attacking</p>
-          <button id="backButton" class="menu-button" style="margin-top: 20px">Back</button>
+          <button id="backButton" class="menu-button back-button-spacing">Back</button>
         </div>
       </div>
     </div>
 
     <!-- Ending Screen -->
-    <div id="endingScreen" class="ending-screen" style="display: none">
+    <div id="endingScreen" class="ending-screen hidden">
       <div class="ending-content">
         <img id="endingImage" src="" alt="Game End" class="ending-image" />
-        <button id="restartButton" class="menu-button" style="margin-top: 30px">Play Again</button>
+        <button id="restartButton" class="menu-button restart-button-spacing">Play Again</button>
       </div>
     </div>
 
-    <div id="canvasContainer" style="position: relative; display: none">
+    <div id="canvasContainer" class="canvas-container hidden">
       <canvas id="canvas" width="720" height="480"></canvas>
       <img src="./img/startscreen/fullscreen.png" alt="Fullscreen" id="fullscreenButton" class="fullscreen-button" />
-      <img
-        src="./img/startscreen/exit_fullscreen.png"
-        alt="Exit Fullscreen"
-        id="exitFullscreenButton"
-        class="fullscreen-button"
-        style="display: none"
-      />
+      <img src="./img/startscreen/exit_fullscreen.png" alt="Exit Fullscreen" id="exitFullscreenButton" class="fullscreen-button hidden" />
     </div>
   </body>
 </html>

@@ -131,6 +131,26 @@ h2 {
   font-size: 22px;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.instructions-title-spacing {
+  margin-top: 25px;
+}
+
+.back-button-spacing {
+  margin-top: 20px;
+}
+
+.restart-button-spacing {
+  margin-top: 30px;
+}
+
+.canvas-container {
+  position: relative;
+}
+
 @media only screen and (max-width: 720px) {
   canvas {
     width: 100%;
