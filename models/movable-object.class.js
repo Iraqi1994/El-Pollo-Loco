@@ -5,14 +5,17 @@ class MovableObject extends DrawableObject {
   acceleration = 2;
   energy = 100;
   lastHit = 0;
+  gravityInterval;
 
   applyGravity() {
-    setInterval(() => {
+    this.gravityInterval = setInterval(() => {
+      if (!this.isActive) return;
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
       }
     }, 1000 / 25);
+    this.intervals.push(this.gravityInterval);
   }
 
   isAboveGround() {
@@ -99,5 +102,12 @@ class MovableObject extends DrawableObject {
 
   isDead() {
     return this.energy === 0;
+  }
+
+  cleanup() {
+    if (this.gravityInterval) {
+      clearInterval(this.gravityInterval);
+    }
+    super.cleanup();
   }
 }

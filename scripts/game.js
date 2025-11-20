@@ -3,6 +3,7 @@ let world;
 let keyboard = new Keyboard();
 let gameStarted = false;
 let gameActive = false;
+let endScreenTimeout = null;
 
 const init = () => {
   canvas = document.getElementById("canvas");
@@ -34,7 +35,8 @@ const showMainMenu = () => {
 };
 
 const startGame = () => {
-  if (gameStarted) return;
+  // Prevent multiple game instances
+  if (gameStarted || world) return;
 
   gameStarted = true;
   gameActive = true;
@@ -45,16 +47,35 @@ const startGame = () => {
 };
 
 const restartGame = () => {
-  gameStarted = false;
+  // Set flags first to stop all intervals immediately
   gameActive = false;
-  world = null;
+  gameStarted = false;
+
+  // Clear any pending end screen timeout
+  if (endScreenTimeout) {
+    clearTimeout(endScreenTimeout);
+    endScreenTimeout = null;
+  }
+
+  // Reset keyboard state to prevent stuck keys
+  keyboard.RIGHT = false;
+  keyboard.LEFT = false;
+  keyboard.UP = false;
+  keyboard.DOWN = false;
+  keyboard.SPACE = false;
+  keyboard.D = false;
+
+  // Now cleanup the world
+  if (world) {
+    world.cleanup();
+    world = null;
+  }
 
   document.getElementById("endingScreen").classList.add("hidden");
   document.getElementById("canvasContainer").classList.add("hidden");
   document.getElementById("startScreen").classList.remove("hidden");
   showMainMenu();
 };
-
 const showEndingScreen = (won) => {
   gameActive = false;
 
@@ -67,9 +88,11 @@ const showEndingScreen = (won) => {
     endingImage.alt = "Game Over";
   }
 
-  setTimeout(() => {
-    document.getElementById("canvasContainer").classList.add("hidden");
-    document.getElementById("endingScreen").classList.remove("hidden");
+  endScreenTimeout = setTimeout(() => {
+    if (!gameActive) {
+      document.getElementById("canvasContainer").classList.add("hidden");
+      document.getElementById("endingScreen").classList.remove("hidden");
+    }
   }, 1000);
 };
 

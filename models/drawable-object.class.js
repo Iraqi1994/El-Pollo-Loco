@@ -8,6 +8,8 @@ class DrawableObject {
   width = 100;
   offset = { top: 0, right: 0, bottom: 0, left: 0 };
   coinOffset = 52;
+  intervals = [];
+  isActive = true;
 
   loadImage(path) {
     this.img = new Image();
@@ -27,13 +29,7 @@ class DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (
-      this instanceof Character ||
-      this instanceof Chick ||
-      this instanceof Chicken ||
-      this instanceof ThrowableObject ||
-      this instanceof Endboss
-    ) {
+    if (this instanceof Character || this instanceof Chick || this instanceof Chicken || this instanceof ThrowableObject || this instanceof Endboss) {
       ctx.beginPath();
       ctx.lineWidth = "2";
       ctx.strokeStyle = "blue";
@@ -43,12 +39,7 @@ class DrawableObject {
       ctx.beginPath();
       ctx.lineWidth = "2";
       ctx.strokeStyle = "red";
-      ctx.rect(
-        this.x + this.offset.left,
-        this.y + this.offset.top,
-        this.width - this.offset.right - this.offset.left,
-        this.height - this.offset.bottom - this.offset.top
-      );
+      ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.right - this.offset.left, this.height - this.offset.bottom - this.offset.top);
       ctx.stroke();
     }
     if (this instanceof Coin) {
@@ -69,6 +60,38 @@ class DrawableObject {
       const offsetRadius = this.width / 2 - this.coinOffset;
       ctx.arc(offsetCenterX, offsetCenterY, offsetRadius, 0, 2 * Math.PI);
       ctx.stroke();
+    }
+  }
+
+  cleanup() {
+    this.isActive = false;
+
+    if (this.intervals && Array.isArray(this.intervals)) {
+      this.intervals.forEach((interval) => {
+        if (interval !== null && interval !== undefined) {
+          clearInterval(interval);
+        }
+      });
+      this.intervals = [];
+    }
+
+    if (this.imageCache) {
+      Object.keys(this.imageCache).forEach((key) => {
+        const img = this.imageCache[key];
+        if (img) {
+          img.src = "";
+          img.onload = null;
+          img.onerror = null;
+        }
+      });
+      this.imageCache = {};
+    }
+
+    if (this.img) {
+      this.img.src = "";
+      this.img.onload = null;
+      this.img.onerror = null;
+      this.img = null;
     }
   }
 }

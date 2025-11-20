@@ -1,31 +1,42 @@
 class World {
-  character = new Character();
-  level = level1;
+  character;
+  level;
   canvas;
   ctx;
   keyboard;
   camera_x = 0;
-  healthbar = new Healthbar();
-  coinbar = new Coinbar();
-  salsabar = new Salsabar();
+  healthbar;
+  coinbar;
+  salsabar;
   throwableObjects = [];
-  allCoins = this.level.coins.length;
+  allCoins;
   maxBottles = 5;
   lastThrowTime = 0;
   throwCooldown = 500;
   isBossActive = false;
   bossRoomCameraX = 0;
+  intervals = [];
+  animationFrameId = null;
+  isActive = true;
 
   constructor(canvas, keyboard) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.keyboard = keyboard;
+    this.character = new Character();
+    this.level = createLevel1();
+    this.healthbar = new Healthbar();
+    this.coinbar = new Coinbar();
+    this.salsabar = new Salsabar();
+    this.allCoins = this.level.coins.length;
     this.draw();
     this.setWorld();
     this.run();
   }
 
   draw() {
+    if (!this.isActive) return;
+
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.ctx.translate(this.camera_x, 0);
@@ -42,7 +53,7 @@ class World {
     this.addObjectsToMap(this.level.throwableObjects);
     this.addObjectsToMap(this.throwableObjects);
     this.ctx.translate(-this.camera_x, 0);
-    requestAnimationFrame(() => this.draw());
+    this.animationFrameId = requestAnimationFrame(() => this.draw());
   }
 
   addObjectsToMap(objects) {
@@ -84,16 +95,19 @@ class World {
   }
 
   run() {
-    setInterval(() => {
-      this.checkCollisions();
-      this.checkThrowableObjects();
-      this.checkCollectibles();
-      this.checkBottleEnemyCollisions();
-      this.removeDeadEnemies();
-      this.removeSplashedBottles();
-      this.checkBossActivation();
-      this.checkGameEnd();
-    }, 1000 / 60);
+    this.intervals.push(
+      setInterval(() => {
+        if (!this.isActive) return;
+        this.checkCollisions();
+        this.checkThrowableObjects();
+        this.checkCollectibles();
+        this.checkBottleEnemyCollisions();
+        this.removeDeadEnemies();
+        this.removeSplashedBottles();
+        this.checkBossActivation();
+        this.checkGameEnd();
+      }, 1000 / 60)
+    );
   }
 
   checkCollisions() {
@@ -104,12 +118,7 @@ class World {
       } else if (enemy instanceof Endboss && this.character.isJumpingOn(enemy) && !enemy.isDead()) {
         enemy.hit(20);
         this.character.speedY = 15;
-      } else if (
-        this.character.isColliding(enemy) &&
-        !enemy.chickenIsDead &&
-        !this.character.isHurt() &&
-        !(enemy instanceof Endboss && enemy.isDead())
-      ) {
+      } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead())) {
         this.character.hit(5);
         this.healthbar.setPercentage(this.character.energy);
       }
@@ -165,7 +174,14 @@ class World {
 
       if (isChickenDead || isBossDead) {
         const timeSinceDeath = Date.now() - enemy.deathTime;
-        return timeSinceDeath < 1000;
+        const shouldRemove = timeSinceDeath >= 1000;
+
+        if (shouldRemove && enemy.cleanup) {
+          enemy.cleanup();
+          if (enemy.world) enemy.world = null;
+        }
+
+        return !shouldRemove;
       }
       return true;
     });
@@ -191,7 +207,13 @@ class World {
     this.throwableObjects = this.throwableObjects.filter((bottle) => {
       if (bottle.isSplashing) {
         const timeSinceSplash = Date.now() - bottle.splashStartTime;
-        return timeSinceSplash < 300;
+        const shouldRemove = timeSinceSplash >= 300;
+
+        if (shouldRemove && bottle.cleanup) {
+          bottle.cleanup();
+        }
+
+        return !shouldRemove;
       }
       return true;
     });
@@ -218,5 +240,92 @@ class World {
     if (endboss && endboss.isDead() && endboss.deathAnimationFinished && gameActive) {
       showEndingScreen(true);
     }
+  }
+
+  cleanup() {
+    this.isActive = false;
+
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+
+    this.intervals.forEach((interval) => clearInterval(interval));
+    this.intervals = [];
+
+    if (this.ctx && this.canvas) {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+
+    if (this.character) {
+      if (this.character.cleanup) this.character.cleanup();
+      this.character.world = null;
+      this.character = null;
+    }
+
+    if (this.healthbar) {
+      if (this.healthbar.cleanup) this.healthbar.cleanup();
+      this.healthbar = null;
+    }
+    if (this.coinbar) {
+      if (this.coinbar.cleanup) this.coinbar.cleanup();
+      this.coinbar = null;
+    }
+    if (this.salsabar) {
+      if (this.salsabar.cleanup) this.salsabar.cleanup();
+      this.salsabar = null;
+    }
+
+    if (this.level) {
+      if (this.level.enemies) {
+        this.level.enemies.forEach((enemy) => {
+          if (enemy.cleanup) enemy.cleanup();
+          if (enemy.world) enemy.world = null;
+        });
+        this.level.enemies = [];
+      }
+
+      if (this.level.clouds) {
+        this.level.clouds.forEach((cloud) => {
+          if (cloud.cleanup) cloud.cleanup();
+        });
+        this.level.clouds = [];
+      }
+
+      if (this.level.backgroundObjects) {
+        this.level.backgroundObjects.forEach((bg) => {
+          if (bg.cleanup) bg.cleanup();
+        });
+        this.level.backgroundObjects = [];
+      }
+
+      if (this.level.coins) {
+        this.level.coins.forEach((coin) => {
+          if (coin.cleanup) coin.cleanup();
+        });
+        this.level.coins = [];
+      }
+
+      if (this.level.throwableObjects) {
+        this.level.throwableObjects.forEach((obj) => {
+          if (obj.cleanup) obj.cleanup();
+        });
+        this.level.throwableObjects = [];
+      }
+
+      this.level = null;
+    }
+
+    if (this.throwableObjects) {
+      this.throwableObjects.forEach((obj) => {
+        if (obj.cleanup) obj.cleanup();
+      });
+      this.throwableObjects = [];
+    }
+
+    this.ctx = null;
+    this.canvas = null;
+    this.keyboard = null;
   }
 }

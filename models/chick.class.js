@@ -18,20 +18,24 @@ class Chick extends MovableObject {
   }
 
   animate() {
-    setInterval(() => {
-      if (gameActive && !this.chickenIsDead) {
-        this.moveLeft();
-      }
-    }, 1000 / 60);
-    setInterval(() => {
-      if (gameActive) {
-        if (this.chickenIsDead) {
-          this.playAnimation(this.IMAGES_DEAD);
-        } else {
-          this.playAnimation(this.IMAGES_WALKING);
+    this.intervals.push(
+      setInterval(() => {
+        if (gameActive && this.isActive && !this.chickenIsDead) {
+          this.moveLeft();
         }
-      }
-    }, 200);
+      }, 1000 / 60)
+    );
+    this.intervals.push(
+      setInterval(() => {
+        if (gameActive && this.isActive) {
+          if (this.chickenIsDead) {
+            this.playAnimation(this.IMAGES_DEAD);
+          } else {
+            this.playAnimation(this.IMAGES_WALKING);
+          }
+        }
+      }, 200)
+    );
   }
 
   die() {

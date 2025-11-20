@@ -54,59 +54,65 @@ class Character extends MovableObject {
     let wasAboveGround = false;
     let wasHurt = false;
 
-    setInterval(() => {
-      if (gameActive) {
-        if (this.world.keyboard.RIGHT && this.x + this.width - this.offset.right < this.getRightBoundary()) {
-          this.moveRight();
-          this.otherDirection = false;
-        }
+    this.intervals.push(
+      setInterval(() => {
+        if (gameActive && this.isActive && this.world) {
+          if (this.world.keyboard.RIGHT && this.x + this.width - this.offset.right < this.getRightBoundary()) {
+            this.moveRight();
+            this.otherDirection = false;
+          }
 
-        if (this.world.keyboard.LEFT && this.x > this.getLeftBoundary()) {
-          this.moveLeft();
-          this.otherDirection = true;
-        }
+          if (this.world.keyboard.LEFT && this.x > this.getLeftBoundary()) {
+            this.moveLeft();
+            this.otherDirection = true;
+          }
 
-        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-          this.jump();
-        }
+          if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
+          }
 
-        if (wasAboveGround && !this.isAboveGround()) {
-          this.img = this.imageCache[this.IMAGES_WALKING[0]];
-          this.currentImage = 0;
-        }
-        wasAboveGround = this.isAboveGround();
-
-        if (!this.world.isBossActive) {
-          this.world.camera_x = -this.x + 70;
-        }
-      }
-    }, 1000 / 60);
-
-    setInterval(() => {
-      if (gameActive) {
-        if (this.isDead()) {
-          this.playAnimation(this.IMAGES_DEAD);
-        } else if (this.isHurt()) {
-          this.playAnimation(this.IMAGES_HURT);
-          wasHurt = true;
-        } else {
-          if (wasHurt) {
+          if (wasAboveGround && !this.isAboveGround()) {
             this.img = this.imageCache[this.IMAGES_WALKING[0]];
             this.currentImage = 0;
-            wasHurt = false;
           }
-          if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
-            this.playAnimation(this.IMAGES_WALKING);
+          wasAboveGround = this.isAboveGround();
+
+          if (!this.world.isBossActive) {
+            this.world.camera_x = -this.x + 70;
           }
         }
-      }
-    }, 50);
+      }, 1000 / 60)
+    );
 
-    setInterval(() => {
-      if (this.isAboveGround()) {
-        this.playAnimation(this.IMAGES_JUMPING);
-      }
-    }, 125);
+    this.intervals.push(
+      setInterval(() => {
+        if (gameActive && this.isActive && this.world) {
+          if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+          } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+            wasHurt = true;
+          } else {
+            if (wasHurt) {
+              this.img = this.imageCache[this.IMAGES_WALKING[0]];
+              this.currentImage = 0;
+              wasHurt = false;
+            }
+            if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
+              this.playAnimation(this.IMAGES_WALKING);
+            }
+          }
+        }
+      }, 50)
+    );
+
+    this.intervals.push(
+      setInterval(() => {
+        if (gameActive && this.isActive && this.isAboveGround()) {
+          this.playAnimation(this.IMAGES_JUMPING);
+        }
+      }, 125)
+    );
   }
 
   collectCoin() {
@@ -118,6 +124,7 @@ class Character extends MovableObject {
   }
 
   getLeftBoundary() {
+    if (!this.world || !this.world.level) return 0;
     const endboss = this.world.level.enemies.find((enemy) => enemy instanceof Endboss);
     if (!endboss) return 0;
     if (endboss.isActivated) {
@@ -127,6 +134,7 @@ class Character extends MovableObject {
   }
 
   getRightBoundary() {
+    if (!this.world || !this.world.level) return 3500;
     const endboss = this.world.level.enemies.find((enemy) => enemy instanceof Endboss);
     if (!endboss) return this.world.level.level_end_x;
     if (endboss.isActivated) {

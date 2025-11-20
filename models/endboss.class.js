@@ -14,6 +14,7 @@ class Endboss extends MovableObject {
   attackAnimationStarted = false;
   attackStartTime = 0;
   hasDealtDamage = false;
+  activationTimeout = null;
 
   IMAGES_WALKING = ["../img/4_enemie_boss_chicken/1_walk/G1.png", "../img/4_enemie_boss_chicken/1_walk/G2.png", "../img/4_enemie_boss_chicken/1_walk/G3.png", "../img/4_enemie_boss_chicken/1_walk/G4.png"];
 
@@ -58,52 +59,58 @@ class Endboss extends MovableObject {
   }
 
   animate() {
-    setInterval(() => {
-      if (gameActive) {
-        if (this.isDead() && !this.deathAnimationFinished) {
-          this.playDeathAnimation(this.IMAGES_DEAD);
-        } else if (this.isDead() && this.deathAnimationFinished) {
-        } else if (this.isAttacking) {
-          this.playAttackAnimation();
-        } else if (this.isHurt()) {
-          this.playAnimation(this.IMAGES_HURT);
-        } else if (this.isActivated && !this.isDead()) {
-          this.playAnimation(this.IMAGES_WALKING);
-        } else if (!this.isDead()) {
-          this.playAnimation(this.IMAGES_ALERT);
+    this.intervals.push(
+      setInterval(() => {
+        if (gameActive && this.isActive) {
+          if (this.isDead() && !this.deathAnimationFinished) {
+            this.playDeathAnimation(this.IMAGES_DEAD);
+          } else if (this.isDead() && this.deathAnimationFinished) {
+          } else if (this.isAttacking) {
+            this.playAttackAnimation();
+          } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+          } else if (this.isActivated && !this.isDead()) {
+            this.playAnimation(this.IMAGES_WALKING);
+          } else if (!this.isDead()) {
+            this.playAnimation(this.IMAGES_ALERT);
+          }
         }
-      }
-    }, 200);
+      }, 200)
+    );
   }
 
   startMoving() {
-    setInterval(() => {
-      if (gameActive && !this.isDead() && this.isActivated && !this.isAttacking) {
-        if (this.movingRight) {
-          this.moveRight();
-          this.otherDirection = true;
-          if (this.x + this.width >= this.rightBoundary) {
-            this.startAttack();
-            this.movingRight = false;
-          }
-        } else {
-          this.moveLeft();
-          this.otherDirection = false;
-          if (this.x <= this.leftBoundary) {
-            this.startAttack();
-            this.movingRight = true;
+    this.intervals.push(
+      setInterval(() => {
+        if (gameActive && this.isActive && !this.isDead() && this.isActivated && !this.isAttacking) {
+          if (this.movingRight) {
+            this.moveRight();
+            this.otherDirection = true;
+            if (this.x + this.width >= this.rightBoundary) {
+              this.startAttack();
+              this.movingRight = false;
+            }
+          } else {
+            this.moveLeft();
+            this.otherDirection = false;
+            if (this.x <= this.leftBoundary) {
+              this.startAttack();
+              this.movingRight = true;
+            }
           }
         }
-      }
-    }, 1000 / 60);
+      }, 1000 / 60)
+    );
   }
 
   activate(cameraX) {
     if (!this.isActivated) {
       this.leftBoundary = -cameraX;
       this.rightBoundary = -cameraX + 720;
-      setTimeout(() => {
-        this.isActivated = true;
+      this.activationTimeout = setTimeout(() => {
+        if (this.isActive) {
+          this.isActivated = true;
+        }
       }, 1000);
     }
   }
@@ -147,7 +154,7 @@ class Endboss extends MovableObject {
       this.playAnimation(this.IMAGES_ATTACK);
       const damageWindow = 200 * 4;
       if (!this.hasDealtDamage && timeSinceAttackStart >= damageWindow && timeSinceAttackStart < damageWindow + 200) {
-        if (this.isCharacterInFront()) {
+        if (this.world && this.isCharacterInFront()) {
           this.world.character.hit(20);
           this.world.healthbar.setPercentage(this.world.character.energy);
           this.hasDealtDamage = true;
@@ -168,5 +175,13 @@ class Endboss extends MovableObject {
     } else {
       return character.x + character.width > this.x - attackRange && character.x < this.x;
     }
+  }
+
+  cleanup() {
+    if (this.activationTimeout) {
+      clearTimeout(this.activationTimeout);
+      this.activationTimeout = null;
+    }
+    super.cleanup();
   }
 }
