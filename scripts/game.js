@@ -11,6 +11,7 @@ const init = () => {
   const instructionsButton = document.getElementById("instructionsButton");
   const backButton = document.getElementById("backButton");
   const restartButton = document.getElementById("restartButton");
+  const returnButton = document.getElementById("returnButton");
   const fullscreenButton = document.getElementById("fullscreenButton");
   const exitFullscreenButton = document.getElementById("exitFullscreenButton");
 
@@ -18,6 +19,7 @@ const init = () => {
   instructionsButton.addEventListener("click", showInstructions);
   backButton.addEventListener("click", showMainMenu);
   restartButton.addEventListener("click", restartGame);
+  returnButton.addEventListener("click", returnToMenu);
   fullscreenButton.addEventListener("click", enterFullscreen);
   exitFullscreenButton.addEventListener("click", exitFullscreen);
 
@@ -35,8 +37,19 @@ const showMainMenu = () => {
 };
 
 const startGame = () => {
-  // Prevent multiple game instances
-  if (gameStarted || world) return;
+  if (gameActive) return;
+
+  if (world) {
+    world.cleanup();
+    world = null;
+  }
+
+  keyboard.RIGHT = false;
+  keyboard.LEFT = false;
+  keyboard.UP = false;
+  keyboard.DOWN = false;
+  keyboard.SPACE = false;
+  keyboard.D = false;
 
   gameStarted = true;
   gameActive = true;
@@ -47,17 +60,13 @@ const startGame = () => {
 };
 
 const restartGame = () => {
-  // Set flags first to stop all intervals immediately
   gameActive = false;
-  gameStarted = false;
 
-  // Clear any pending end screen timeout
   if (endScreenTimeout) {
     clearTimeout(endScreenTimeout);
     endScreenTimeout = null;
   }
 
-  // Reset keyboard state to prevent stuck keys
   keyboard.RIGHT = false;
   keyboard.LEFT = false;
   keyboard.UP = false;
@@ -65,14 +74,41 @@ const restartGame = () => {
   keyboard.SPACE = false;
   keyboard.D = false;
 
-  // Now cleanup the world
   if (world) {
     world.cleanup();
     world = null;
   }
 
   document.getElementById("endingScreen").classList.add("hidden");
-  document.getElementById("canvasContainer").classList.add("hidden");
+  document.getElementById("canvasContainer").classList.remove("hidden");
+
+  gameStarted = true;
+  gameActive = true;
+  world = new World(canvas, keyboard);
+};
+
+const returnToMenu = () => {
+  gameActive = false;
+  gameStarted = false;
+
+  if (endScreenTimeout) {
+    clearTimeout(endScreenTimeout);
+    endScreenTimeout = null;
+  }
+
+  keyboard.RIGHT = false;
+  keyboard.LEFT = false;
+  keyboard.UP = false;
+  keyboard.DOWN = false;
+  keyboard.SPACE = false;
+  keyboard.D = false;
+
+  if (world) {
+    world.cleanup();
+    world = null;
+  }
+
+  document.getElementById("endingScreen").classList.add("hidden");
   document.getElementById("startScreen").classList.remove("hidden");
   showMainMenu();
 };

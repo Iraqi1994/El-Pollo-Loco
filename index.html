@@ -7,11 +7,8 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/png" href="./img/favicon/sombrero_favicon.png" />
 
-    <!-- Base classes first -->
     <script src="models/drawable-object.class.js"></script>
     <script src="models/movable-object.class.js"></script>
-
-    <!-- Child classes that extend MovableObject or DrawableObject -->
     <script src="models/statusbar.class.js"></script>
     <script src="models/healthbar.class.js"></script>
     <script src="models/coinbar.class.js"></script>
@@ -24,20 +21,14 @@
     <script src="models/cloud.class.js"></script>
     <script src="models/background-object.class.js"></script>
     <script src="models/throwable-object.class.js"></script>
-
-    <!-- Level and utilities -->
     <script src="models/keyboard.class.js"></script>
     <script src="models/level.class.js"></script>
     <script src="levels/level1.js"></script>
-
-    <!-- World and game initialization (depends on level1) -->
     <script src="models/world.class.js"></script>
     <script src="scripts/game.js"></script>
   </head>
   <body>
     <h1>El Pollo Loco</h1>
-
-    <!-- Start Screen - Main Menu -->
     <div id="startScreen" class="start-screen">
       <div class="start-content">
         <h2>Welcome to El Pollo Loco!</h2>
@@ -59,12 +50,13 @@
         </div>
       </div>
     </div>
-
-    <!-- Ending Screen -->
     <div id="endingScreen" class="ending-screen hidden">
       <div class="ending-content">
         <img id="endingImage" src="" alt="Game End" class="ending-image" />
-        <button id="restartButton" class="menu-button restart-button-spacing">Play Again</button>
+        <div class="ending-buttons">
+          <button id="returnButton" class="menu-button">Return</button>
+          <button id="restartButton" class="menu-button restart-button-spacing">Play Again</button>
+        </div>
       </div>
     </div>
 

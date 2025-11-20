@@ -212,6 +212,18 @@ h2 {
   margin-bottom: 20px;
 }
 
+.ending-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.ending-buttons .menu-button {
+  margin: 0;
+}
+
 #canvasContainer {
   position: relative;
   display: inline-block;
