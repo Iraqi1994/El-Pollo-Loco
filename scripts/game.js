@@ -4,6 +4,10 @@ let keyboard = new Keyboard();
 let gameStarted = false;
 let gameActive = false;
 let endScreenTimeout = null;
+let isMuted = false;
+let backgroundMusic = new Audio("audio/background_music/La_Cucaracha.mp3");
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.03;
 
 const init = () => {
   canvas = document.getElementById("canvas");
@@ -12,14 +16,24 @@ const init = () => {
   const backButton = document.getElementById("backButton");
   const restartButton = document.getElementById("restartButton");
   const returnButton = document.getElementById("returnButton");
+  const muteButton = document.getElementById("muteButton");
   const fullscreenButton = document.getElementById("fullscreenButton");
   const exitFullscreenButton = document.getElementById("exitFullscreenButton");
+  const savedMutedState = localStorage.getItem("isMuted");
+  if (savedMutedState !== null) {
+    isMuted = savedMutedState === "true";
+    backgroundMusic.muted = isMuted;
+    if (isMuted) {
+      muteButton.style.opacity = "0.5";
+    }
+  }
 
   startButton.addEventListener("click", startGame);
   instructionsButton.addEventListener("click", showInstructions);
   backButton.addEventListener("click", showMainMenu);
   restartButton.addEventListener("click", restartGame);
   returnButton.addEventListener("click", returnToMenu);
+  muteButton.addEventListener("click", toggleMute);
   fullscreenButton.addEventListener("click", enterFullscreen);
   exitFullscreenButton.addEventListener("click", exitFullscreen);
 
@@ -54,6 +68,7 @@ const startGame = () => {
   gameStarted = true;
   gameActive = true;
 
+  backgroundMusic.play();
   document.getElementById("startScreen").classList.add("hidden");
   document.getElementById("canvasContainer").classList.remove("hidden");
   world = new World(canvas, keyboard);
@@ -84,12 +99,16 @@ const restartGame = () => {
 
   gameStarted = true;
   gameActive = true;
+  backgroundMusic.play();
   world = new World(canvas, keyboard);
 };
 
 const returnToMenu = () => {
   gameActive = false;
   gameStarted = false;
+
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
 
   if (endScreenTimeout) {
     clearTimeout(endScreenTimeout);
@@ -114,6 +133,9 @@ const returnToMenu = () => {
 };
 const showEndingScreen = (won) => {
   gameActive = false;
+
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
 
   const endingImage = document.getElementById("endingImage");
   if (won) {
@@ -163,6 +185,19 @@ const handleFullscreenChange = () => {
   } else {
     fullscreenButton.classList.remove("hidden");
     exitFullscreenButton.classList.add("hidden");
+  }
+};
+
+const toggleMute = () => {
+  isMuted = !isMuted;
+  backgroundMusic.muted = isMuted;
+  localStorage.setItem("isMuted", isMuted);
+
+  const muteButton = document.getElementById("muteButton");
+  if (isMuted) {
+    muteButton.style.opacity = "0.5";
+  } else {
+    muteButton.style.opacity = "1";
   }
 };
 window.addEventListener("load", init);

@@ -187,6 +187,26 @@ h2 {
   transform: scale(0.95);
 }
 
+.mute-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s, filter 0.2s, opacity 0.3s;
+}
+
+.mute-button:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.mute-button:active {
+  transform: scale(0.95);
+}
+
 .ending-screen {
   display: flex;
   justify-content: center;
@@ -252,6 +272,13 @@ h2 {
 #canvasContainer:fullscreen .fullscreen-button {
   position: absolute;
   bottom: calc(50% - min(50vh, 50vw * 480 / 720) + 20px);
+  right: calc(50% - min(50vw, 50vh * 720 / 480) + 20px);
+  z-index: 100;
+}
+
+#canvasContainer:fullscreen .mute-button {
+  position: absolute;
+  top: calc(50% - min(50vh, 50vw * 480 / 720) + 20px);
   right: calc(50% - min(50vw, 50vh * 720 / 480) + 20px);
   z-index: 100;
 }
