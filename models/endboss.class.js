@@ -15,6 +15,7 @@ class Endboss extends MovableObject {
   attackStartTime = 0;
   hasDealtDamage = false;
   activationTimeout = null;
+  warcrySound = new Audio("../audio/enemies/endboss_warcry.wav");
 
   IMAGES_WALKING = ["../img/4_enemie_boss_chicken/1_walk/G1.png", "../img/4_enemie_boss_chicken/1_walk/G2.png", "../img/4_enemie_boss_chicken/1_walk/G3.png", "../img/4_enemie_boss_chicken/1_walk/G4.png"];
 
@@ -54,6 +55,7 @@ class Endboss extends MovableObject {
     this.offset = { top: 50, right: 25, bottom: 30, left: 20 };
     this.x = 3300;
     this.world = null;
+    this.warcrySound.volume = 0.5;
     this.animate();
     this.startMoving();
   }
@@ -107,6 +109,10 @@ class Endboss extends MovableObject {
     if (!this.isActivated) {
       this.leftBoundary = -cameraX;
       this.rightBoundary = -cameraX + 720;
+      if (!isMuted) {
+        this.warcrySound.currentTime = 0;
+        this.warcrySound.play().catch(() => {});
+      }
       this.activationTimeout = setTimeout(() => {
         if (this.isActive) {
           this.isActivated = true;

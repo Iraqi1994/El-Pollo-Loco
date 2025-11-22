@@ -65,6 +65,9 @@ class Character extends MovableObject {
   coins = 0;
   bottles = 0;
   lastInputTime = Date.now();
+  footstepSound = new Audio("../audio/character/footstep.wav");
+  collectCoinSound = new Audio("../audio/character/collect_coin_sound.wav");
+  isWalking = false;
 
   constructor() {
     super().loadImage("../img/2_character_pepe/2_walk/W-21.png");
@@ -75,6 +78,10 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_IDLE_LONG);
     this.offset = { top: 90, right: 20, bottom: 10, left: 20 };
+    this.footstepSound.volume = 0.3;
+    this.footstepSound.loop = true;
+    this.footstepSound.playbackRate = 3.5;
+    this.collectCoinSound.volume = 0.5;
     this.applyGravity();
     this.animate();
   }
@@ -121,9 +128,11 @@ class Character extends MovableObject {
         if (gameActive && this.isActive && this.world) {
           if (this.isDead()) {
             this.playAnimation(this.IMAGES_DEAD);
+            this.stopFootstepSound();
           } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
             wasHurt = true;
+            this.stopFootstepSound();
           } else {
             if (wasHurt) {
               this.img = this.imageCache[this.IMAGES_WALKING[0]];
@@ -132,6 +141,9 @@ class Character extends MovableObject {
             }
             if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
               this.playAnimation(this.IMAGES_WALKING);
+              this.playFootstepSound();
+            } else {
+              this.stopFootstepSound();
             }
           }
         }
@@ -162,10 +174,29 @@ class Character extends MovableObject {
 
   collectCoin() {
     this.coins++;
+    if (!isMuted) {
+      this.collectCoinSound.currentTime = 0;
+      this.collectCoinSound.play().catch(() => {});
+    }
   }
 
   collectBottle() {
     this.bottles++;
+  }
+
+  playFootstepSound() {
+    if (!this.isWalking && !isMuted) {
+      this.footstepSound.play().catch(() => {});
+      this.isWalking = true;
+    }
+  }
+
+  stopFootstepSound() {
+    if (this.isWalking) {
+      this.footstepSound.pause();
+      this.footstepSound.currentTime = 0;
+      this.isWalking = false;
+    }
   }
 
   getLeftBoundary() {
