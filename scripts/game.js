@@ -17,8 +17,6 @@ const init = () => {
   const restartButton = document.getElementById("restartButton");
   const returnButton = document.getElementById("returnButton");
   const muteButton = document.getElementById("muteButton");
-  const fullscreenButton = document.getElementById("fullscreenButton");
-  const exitFullscreenButton = document.getElementById("exitFullscreenButton");
   const savedMutedState = localStorage.getItem("isMuted");
   if (savedMutedState !== null) {
     isMuted = savedMutedState === "true";
@@ -34,10 +32,6 @@ const init = () => {
   restartButton.addEventListener("click", restartGame);
   returnButton.addEventListener("click", returnToMenu);
   muteButton.addEventListener("click", toggleMute);
-  fullscreenButton.addEventListener("click", enterFullscreen);
-  exitFullscreenButton.addEventListener("click", exitFullscreen);
-
-  document.addEventListener("fullscreenchange", handleFullscreenChange);
 };
 
 const showInstructions = () => {
@@ -152,40 +146,6 @@ const showEndingScreen = (won) => {
       document.getElementById("endingScreen").classList.remove("hidden");
     }
   }, 1000);
-};
-
-const enterFullscreen = () => {
-  const container = document.getElementById("canvasContainer");
-  if (container.requestFullscreen) {
-    container.requestFullscreen();
-  } else if (container.webkitRequestFullscreen) {
-    container.webkitRequestFullscreen();
-  } else if (container.msRequestFullscreen) {
-    container.msRequestFullscreen();
-  }
-};
-
-const exitFullscreen = () => {
-  if (document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen();
-  }
-};
-
-const handleFullscreenChange = () => {
-  const fullscreenButton = document.getElementById("fullscreenButton");
-  const exitFullscreenButton = document.getElementById("exitFullscreenButton");
-
-  if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-    fullscreenButton.classList.add("hidden");
-    exitFullscreenButton.classList.remove("hidden");
-  } else {
-    fullscreenButton.classList.remove("hidden");
-    exitFullscreenButton.classList.add("hidden");
-  }
 };
 
 const toggleMute = () => {
