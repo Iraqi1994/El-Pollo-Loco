@@ -7,7 +7,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -398,9 +398,112 @@ h2 {
   .action-btn {
     font-size: 14px;
   }
+
+  .impressum-container {
+    padding: 20px;
+  }
+
+  .impressum-container h1 {
+    font-size: 40px;
+  }
+
+  .impressum-container h2 {
+    font-size: 24px;
+  }
+
+  .impressum-container p {
+    font-size: 16px;
+  }
+
+  .impressum-container strong {
+    font-size: 18px;
+  }
 }
 
-@media (max-height: 630px) {
+.impressum-link {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 24px;
+  letter-spacing: 2px;
+  transition: color 0.3s, transform 0.3s;
+  z-index: 1000;
+}
+
+.impressum-link:hover {
+  color: #ffd700;
+  transform: translateX(-50%) scale(1.1);
+}
+
+.impressum-container {
+  max-width: 800px;
+  width: 90%;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 15px;
+  padding: 40px;
+  margin: 20px auto;
+  color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.impressum-container h1 {
+  color: #ffd700;
+  font-size: 56px;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+.impressum-container h2 {
+  color: #ffd700;
+  font-size: 32px;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #ffd700;
+  padding-bottom: 10px;
+}
+
+.impressum-container p {
+  font-size: 20px;
+  line-height: 1.8;
+  margin: 15px 0;
+  letter-spacing: 1px;
+}
+
+.impressum-container strong {
+  color: #ffd700;
+  font-size: 22px;
+}
+
+.impressum-container a {
+  color: #ffd700;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.impressum-container a.menu-button {
+  color: #000;
+}
+
+.impressum-container a:hover {
+  color: #ffed4e;
+  text-decoration: underline;
+}
+
+.impressum-container a.menu-button:hover {
+  color: #000;
+  text-decoration: none;
+}
+
+.back-home {
+  text-align: center;
+  margin-top: 40px;
+}
+
+@media (max-width: 720px) {
   canvas {
     height: 100vh;
     width: auto;
@@ -413,5 +516,9 @@ h2 {
 
   body {
     flex-direction: row;
+  }
+
+  .impressum-link {
+    display: none;
   }
 }
