@@ -32,6 +32,130 @@ const init = () => {
   restartButton.addEventListener("click", restartGame);
   returnButton.addEventListener("click", returnToMenu);
   muteButton.addEventListener("click", toggleMute);
+
+  setupMobileControls();
+  checkOrientation();
+  window.addEventListener("resize", checkOrientation);
+  window.addEventListener("orientationchange", checkOrientation);
+};
+
+const checkOrientation = () => {
+  const orientationWarning = document.getElementById("orientationWarning");
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 720;
+  const isPortrait = window.innerHeight > window.innerWidth;
+
+  if (isMobile && isPortrait) {
+    orientationWarning.classList.remove("hidden");
+  } else {
+    orientationWarning.classList.add("hidden");
+  }
+};
+
+const setupMobileControls = () => {
+  const btnLeft = document.getElementById("btnLeft");
+  const btnRight = document.getElementById("btnRight");
+  const btnJump = document.getElementById("btnJump");
+  const btnThrow = document.getElementById("btnThrow");
+
+  if (btnLeft) {
+    btnLeft.addEventListener(
+      "touchstart",
+      (e) => {
+        e.preventDefault();
+        keyboard.LEFT = true;
+        btnLeft.classList.add("pressed");
+      },
+      { passive: false }
+    );
+    btnLeft.addEventListener(
+      "touchend",
+      (e) => {
+        e.preventDefault();
+        keyboard.LEFT = false;
+        btnLeft.classList.remove("pressed");
+      },
+      { passive: false }
+    );
+    btnLeft.addEventListener("touchcancel", (e) => {
+      keyboard.LEFT = false;
+      btnLeft.classList.remove("pressed");
+    });
+  }
+
+  if (btnRight) {
+    btnRight.addEventListener(
+      "touchstart",
+      (e) => {
+        e.preventDefault();
+        keyboard.RIGHT = true;
+        btnRight.classList.add("pressed");
+      },
+      { passive: false }
+    );
+    btnRight.addEventListener(
+      "touchend",
+      (e) => {
+        e.preventDefault();
+        keyboard.RIGHT = false;
+        btnRight.classList.remove("pressed");
+      },
+      { passive: false }
+    );
+    btnRight.addEventListener("touchcancel", (e) => {
+      keyboard.RIGHT = false;
+      btnRight.classList.remove("pressed");
+    });
+  }
+
+  if (btnJump) {
+    btnJump.addEventListener(
+      "touchstart",
+      (e) => {
+        e.preventDefault();
+        keyboard.SPACE = true;
+        btnJump.classList.add("pressed");
+      },
+      { passive: false }
+    );
+    btnJump.addEventListener(
+      "touchend",
+      (e) => {
+        e.preventDefault();
+        keyboard.SPACE = false;
+        btnJump.classList.remove("pressed");
+      },
+      { passive: false }
+    );
+    btnJump.addEventListener("touchcancel", (e) => {
+      keyboard.SPACE = false;
+      btnJump.classList.remove("pressed");
+    });
+  }
+
+  if (btnThrow) {
+    btnThrow.addEventListener(
+      "touchstart",
+      (e) => {
+        e.preventDefault();
+        keyboard.D = true;
+        btnThrow.classList.add("pressed");
+      },
+      { passive: false }
+    );
+    btnThrow.addEventListener(
+      "touchend",
+      (e) => {
+        e.preventDefault();
+        keyboard.D = false;
+        btnThrow.classList.remove("pressed");
+      },
+      { passive: false }
+    );
+    btnThrow.addEventListener("touchcancel", (e) => {
+      keyboard.D = false;
+      btnThrow.classList.remove("pressed");
+    });
+  }
 };
 
 const showInstructions = () => {

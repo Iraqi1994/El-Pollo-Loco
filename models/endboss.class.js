@@ -16,6 +16,7 @@ class Endboss extends MovableObject {
   hasDealtDamage = false;
   activationTimeout = null;
   warcrySound = new Audio("../audio/enemies/endboss_warcry.wav");
+  attackSound = new Audio("../audio/enemies/endboss_attack.wav");
 
   IMAGES_WALKING = ["../img/4_enemie_boss_chicken/1_walk/G1.png", "../img/4_enemie_boss_chicken/1_walk/G2.png", "../img/4_enemie_boss_chicken/1_walk/G3.png", "../img/4_enemie_boss_chicken/1_walk/G4.png"];
 
@@ -56,6 +57,7 @@ class Endboss extends MovableObject {
     this.x = 3300;
     this.world = null;
     this.warcrySound.volume = 0.3;
+    this.attackSound.volume = 0.4;
     this.animate();
     this.startMoving();
   }
@@ -151,13 +153,22 @@ class Endboss extends MovableObject {
     if (!this.attackAnimationStarted) {
       this.currentImage = 0;
       this.attackAnimationStarted = true;
+      if (!isMuted) {
+        this.attackSound.currentTime = 0;
+        this.attackSound.play().catch(() => {});
+      }
     }
 
     const animationDuration = this.IMAGES_ATTACK.length * 200 * 2;
     const timeSinceAttackStart = Date.now() - this.attackStartTime;
 
     if (timeSinceAttackStart < animationDuration) {
+      const previousImage = this.currentImage;
       this.playAnimation(this.IMAGES_ATTACK);
+      if (!isMuted && previousImage > this.currentImage) {
+        this.attackSound.currentTime = 0;
+        this.attackSound.play().catch(() => {});
+      }
       const damageWindow = 200 * 4;
       if (!this.hasDealtDamage && timeSinceAttackStart >= damageWindow && timeSinceAttackStart < damageWindow + 200) {
         if (this.world && this.isCharacterInFront()) {

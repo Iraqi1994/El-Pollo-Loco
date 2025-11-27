@@ -28,6 +28,13 @@
     <script src="scripts/game.js"></script>
   </head>
   <body>
+    <div id="orientationWarning" class="orientation-warning hidden">
+      <div class="orientation-content">
+        <h2>Please turn your device</h2>
+        <div class="rotate-icon">📱 ↻</div>
+        <p>This game is best played in landscape mode</p>
+      </div>
+    </div>
     <h1>El Pollo Loco</h1>
     <div id="startScreen" class="start-screen">
       <div class="start-content">
@@ -63,6 +70,16 @@
     <div id="canvasContainer" class="canvas-container hidden">
       <canvas id="canvas" width="720" height="480"></canvas>
       <img src="./img/mute/note_symbol.png" alt="Mute" id="muteButton" class="mute-button" />
+      <div class="mobile-controls">
+        <div class="control-left">
+          <button id="btnLeft" class="control-btn direction-btn">←</button>
+          <button id="btnRight" class="control-btn direction-btn">→</button>
+        </div>
+        <div class="control-right">
+          <button id="btnJump" class="control-btn action-btn">JUMP</button>
+          <button id="btnThrow" class="control-btn action-btn">THROW</button>
+        </div>
+      </div>
     </div>
   </body>
 </html>
