@@ -6,6 +6,7 @@ class Chicken extends MovableObject {
   IMAGES_DEAD = ["../img/3_enemies_chicken/chicken_normal/2_dead/dead.png"];
   chickenIsDead = false;
   deathTime = 0;
+  deathSound = new Audio("../audio/enemies/chicken_dead.wav");
 
   constructor(x) {
     super().loadImage("../img/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
@@ -14,6 +15,7 @@ class Chicken extends MovableObject {
     this.offset = { top: 10, right: 15, bottom: 0, left: 15 };
     this.x = x !== undefined ? x : 700 + Math.random() * 2000;
     this.speed = 1 + Math.random() * 0.25;
+    this.deathSound.volume = 0.2;
     this.animate();
   }
 
@@ -41,5 +43,6 @@ class Chicken extends MovableObject {
   die() {
     this.chickenIsDead = true;
     this.deathTime = Date.now();
+    this.deathSound.play();
   }
 }

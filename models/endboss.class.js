@@ -55,7 +55,7 @@ class Endboss extends MovableObject {
     this.offset = { top: 50, right: 25, bottom: 30, left: 20 };
     this.x = 3300;
     this.world = null;
-    this.warcrySound.volume = 0.5;
+    this.warcrySound.volume = 0.3;
     this.animate();
     this.startMoving();
   }

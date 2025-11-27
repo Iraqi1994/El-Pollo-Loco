@@ -67,6 +67,7 @@ class Character extends MovableObject {
   lastInputTime = Date.now();
   footstepSound = new Audio("../audio/character/footstep.wav");
   collectCoinSound = new Audio("../audio/character/collect_coin_sound.wav");
+  jumpSound = new Audio("../audio/character/jump.wav");
   isWalking = false;
 
   constructor() {
@@ -82,8 +83,14 @@ class Character extends MovableObject {
     this.footstepSound.loop = true;
     this.footstepSound.playbackRate = 3.5;
     this.collectCoinSound.volume = 0.5;
+    this.jumpSound.volume = 0.2;
     this.applyGravity();
     this.animate();
+  }
+
+  jump() {
+    super.jump();
+    this.jumpSound.play();
   }
 
   animate() {

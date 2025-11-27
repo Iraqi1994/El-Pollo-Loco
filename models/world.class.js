@@ -114,10 +114,10 @@ class World {
     this.level.enemies.forEach((enemy) => {
       if ((enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead && this.character.isJumpingOn(enemy)) {
         enemy.die();
-        this.character.speedY = 15;
+        this.character.speedY = 8;
       } else if (enemy instanceof Endboss && this.character.isJumpingOn(enemy) && !enemy.isDead()) {
         enemy.hit(20);
-        this.character.speedY = 15;
+        this.character.speedY = 8;
       } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead())) {
         this.character.hit(5);
         this.healthbar.setPercentage(this.character.energy);
