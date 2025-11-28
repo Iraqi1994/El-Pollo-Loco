@@ -126,8 +126,6 @@ class Character extends MovableObject {
     this.intervals.push(this.animateJumping());
   }
 
-  animateDead() {}
-
   animateWalking() {
     if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
       this.playAnimation(this.IMAGES_WALKING);
