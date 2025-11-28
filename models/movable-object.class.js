@@ -28,10 +28,16 @@ class MovableObject extends DrawableObject {
 
   moveRight() {
     this.x += this.speed;
+    this.otherDirection = false;
+    this.lastInputTime = Date.now();
   }
 
   moveLeft() {
     this.x -= this.speed;
+    if (this instanceof Character) {
+      this.otherDirection = true;
+      this.lastInputTime = Date.now();
+    }
   }
 
   playAnimation(images) {
@@ -43,6 +49,7 @@ class MovableObject extends DrawableObject {
 
   jump() {
     this.speedY = 25;
+    this.lastInputTime = Date.now();
   }
 
   isColliding(movableObject) {

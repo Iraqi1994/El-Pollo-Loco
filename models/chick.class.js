@@ -15,7 +15,7 @@ class Chick extends MovableObject {
     this.offset = { top: 5, right: 10, bottom: 0, left: 10 };
     this.x = x !== undefined ? x : 700 + Math.random() * 2000;
     this.speed = 1 + Math.random() * 0.25;
-    this.deathSound.volume = 0.3;
+    this.deathSound.volume = 0.1;
     this.animate();
   }
 
@@ -43,6 +43,8 @@ class Chick extends MovableObject {
   die() {
     this.chickenIsDead = true;
     this.deathTime = Date.now();
-    this.deathSound.play();
+    if (!isMuted) {
+      this.deathSound.play();
+    }
   }
 }
