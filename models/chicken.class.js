@@ -2,7 +2,11 @@ class Chicken extends MovableObject {
   y = 350;
   width = 80;
   height = 80;
-  IMAGES_WALKING = ["../img/3_enemies_chicken/chicken_normal/1_walk/1_w.png", "../img/3_enemies_chicken/chicken_normal/1_walk/2_w.png", "../img/3_enemies_chicken/chicken_normal/1_walk/3_w.png"];
+  IMAGES_WALKING = [
+    "../img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",
+    "../img/3_enemies_chicken/chicken_normal/1_walk/2_w.png",
+    "../img/3_enemies_chicken/chicken_normal/1_walk/3_w.png",
+  ];
   IMAGES_DEAD = ["../img/3_enemies_chicken/chicken_normal/2_dead/dead.png"];
   chickenIsDead = false;
   deathTime = 0;
@@ -20,24 +24,28 @@ class Chicken extends MovableObject {
   }
 
   animate() {
-    this.intervals.push(
-      setInterval(() => {
-        if (gameActive && this.isActive && !this.chickenIsDead) {
-          this.moveLeft();
+    this.intervals.push(this.startMoving());
+    this.intervals.push(this.setBasicAnimationIntervals());
+  }
+
+  startMoving() {
+    setInterval(() => {
+      if (gameActive && this.isActive && !this.chickenIsDead) {
+        this.moveLeft();
+      }
+    }, 1000 / 60);
+  }
+
+  setBasicAnimationIntervals() {
+    setInterval(() => {
+      if (gameActive && this.isActive) {
+        if (this.chickenIsDead) {
+          this.playAnimation(this.IMAGES_DEAD);
+        } else {
+          this.playAnimation(this.IMAGES_WALKING);
         }
-      }, 1000 / 60)
-    );
-    this.intervals.push(
-      setInterval(() => {
-        if (gameActive && this.isActive) {
-          if (this.chickenIsDead) {
-            this.playAnimation(this.IMAGES_DEAD);
-          } else {
-            this.playAnimation(this.IMAGES_WALKING);
-          }
-        }
-      }, 200)
-    );
+      }
+    }, 200);
   }
 
   die() {

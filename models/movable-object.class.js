@@ -64,17 +64,6 @@ class MovableObject extends DrawableObject {
     );
   }
 
-  isJumpingOn(enemy) {
-    return (
-      this.speedY < 0 &&
-      this.isAboveGround() &&
-      this.y + this.height - this.offset.bottom > enemy.y + enemy.offset.top &&
-      this.y + this.height - this.offset.bottom < enemy.y + enemy.height * 0.6 &&
-      this.x + this.width - this.offset.right > enemy.x + enemy.offset.left &&
-      this.x + this.offset.left < enemy.x + enemy.width - enemy.offset.right
-    );
-  }
-
   isCollidingWithCircle(coin) {
     const charCenterX = this.x + this.offset.left + (this.width - this.offset.left - this.offset.right) / 2;
     const charCenterY = this.y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) / 2;
@@ -87,6 +76,17 @@ class MovableObject extends DrawableObject {
     const charRadius = Math.min(this.width - this.offset.left - this.offset.right, this.height - this.offset.top - this.offset.bottom) / 2;
 
     return distance < coinRadius + charRadius;
+  }
+
+  isJumpingOn(enemy) {
+    return (
+      this.speedY < 0 &&
+      this.isAboveGround() &&
+      this.y + this.height - this.offset.bottom > enemy.y + enemy.offset.top &&
+      this.y + this.height - this.offset.bottom < enemy.y + enemy.height * 0.6 &&
+      this.x + this.width - this.offset.right > enemy.x + enemy.offset.left &&
+      this.x + this.offset.left < enemy.x + enemy.width - enemy.offset.right
+    );
   }
 
   hit(damage) {

@@ -18,7 +18,12 @@ class Endboss extends MovableObject {
   warcrySound = new Audio("../audio/enemies/endboss_warcry.wav");
   attackSound = new Audio("../audio/enemies/endboss_attack.wav");
 
-  IMAGES_WALKING = ["../img/4_enemie_boss_chicken/1_walk/G1.png", "../img/4_enemie_boss_chicken/1_walk/G2.png", "../img/4_enemie_boss_chicken/1_walk/G3.png", "../img/4_enemie_boss_chicken/1_walk/G4.png"];
+  IMAGES_WALKING = [
+    "../img/4_enemie_boss_chicken/1_walk/G1.png",
+    "../img/4_enemie_boss_chicken/1_walk/G2.png",
+    "../img/4_enemie_boss_chicken/1_walk/G3.png",
+    "../img/4_enemie_boss_chicken/1_walk/G4.png",
+  ];
 
   IMAGES_ALERT = [
     "../img/4_enemie_boss_chicken/2_alert/G5.png",
@@ -42,9 +47,17 @@ class Endboss extends MovableObject {
     "../img/4_enemie_boss_chicken/3_attack/G20.png",
   ];
 
-  IMAGES_HURT = ["../img/4_enemie_boss_chicken/4_hurt/G21.png", "../img/4_enemie_boss_chicken/4_hurt/G22.png", "../img/4_enemie_boss_chicken/4_hurt/G23.png"];
+  IMAGES_HURT = [
+    "../img/4_enemie_boss_chicken/4_hurt/G21.png",
+    "../img/4_enemie_boss_chicken/4_hurt/G22.png",
+    "../img/4_enemie_boss_chicken/4_hurt/G23.png",
+  ];
 
-  IMAGES_DEAD = ["../img/4_enemie_boss_chicken/5_dead/G24.png", "../img/4_enemie_boss_chicken/5_dead/G25.png", "../img/4_enemie_boss_chicken/5_dead/G26.png"];
+  IMAGES_DEAD = [
+    "../img/4_enemie_boss_chicken/5_dead/G24.png",
+    "../img/4_enemie_boss_chicken/5_dead/G25.png",
+    "../img/4_enemie_boss_chicken/5_dead/G26.png",
+  ];
 
   constructor() {
     super().loadImage("../img/4_enemie_boss_chicken/2_alert/G5.png");
@@ -151,36 +164,57 @@ class Endboss extends MovableObject {
 
   playAttackAnimation() {
     if (!this.attackAnimationStarted) {
-      this.currentImage = 0;
-      this.attackAnimationStarted = true;
-      if (!isMuted) {
-        this.attackSound.currentTime = 0;
-        this.attackSound.play().catch(() => {});
-      }
+      this.initializeAttackAnimation();
     }
+    this.updateAttackAnimation();
+  }
 
+  initializeAttackAnimation() {
+    this.currentImage = 0;
+    this.attackAnimationStarted = true;
+    if (!isMuted) {
+      this.attackSound.currentTime = 0;
+      this.attackSound.play().catch(() => {});
+    }
+  }
+
+  updateAttackAnimation() {
     const animationDuration = this.IMAGES_ATTACK.length * 200 * 2;
     const timeSinceAttackStart = Date.now() - this.attackStartTime;
-
     if (timeSinceAttackStart < animationDuration) {
-      const previousImage = this.currentImage;
-      this.playAnimation(this.IMAGES_ATTACK);
-      if (!isMuted && previousImage > this.currentImage) {
-        this.attackSound.currentTime = 0;
-        this.attackSound.play().catch(() => {});
-      }
-      const damageWindow = 200 * 4;
-      if (!this.hasDealtDamage && timeSinceAttackStart >= damageWindow && timeSinceAttackStart < damageWindow + 200) {
-        if (this.world && this.isCharacterInFront()) {
-          this.world.character.hit(20);
-          this.world.healthbar.setPercentage(this.world.character.energy);
-          this.hasDealtDamage = true;
-        }
-      }
+      this.playAttackFrames(timeSinceAttackStart);
     } else {
-      this.isAttacking = false;
-      this.attackAnimationStarted = false;
+      this.endAttack();
     }
+  }
+
+  playAttackFrames(timeSinceAttackStart) {
+    const previousImage = this.currentImage;
+    this.playAnimation(this.IMAGES_ATTACK);
+    this.handleAttackSound(previousImage);
+    this.handleAttackDamage(timeSinceAttackStart);
+  }
+
+  handleAttackSound(previousImage) {
+    if (!isMuted && previousImage > this.currentImage) {
+      this.attackSound.currentTime = 0;
+      this.attackSound.play().catch(() => {});
+    }
+  }
+
+  handleAttackDamage(timeSinceAttackStart) {
+    const damageWindow = 200 * 4;
+    const isInDamageWindow = timeSinceAttackStart >= damageWindow && timeSinceAttackStart < damageWindow + 200;
+    if (!this.hasDealtDamage && isInDamageWindow && this.world && this.isCharacterInFront()) {
+      this.world.character.hit(20);
+      this.world.healthbar.setPercentage(this.world.character.energy);
+      this.hasDealtDamage = true;
+    }
+  }
+
+  endAttack() {
+    this.isAttacking = false;
+    this.attackAnimationStarted = false;
   }
 
   isCharacterInFront() {

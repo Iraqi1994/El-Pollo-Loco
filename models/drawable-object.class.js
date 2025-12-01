@@ -31,7 +31,13 @@ class DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Chick || this instanceof Chicken || this instanceof ThrowableObject || this instanceof Endboss) {
+    if (
+      this instanceof Character ||
+      this instanceof Chick ||
+      this instanceof Chicken ||
+      this instanceof ThrowableObject ||
+      this instanceof Endboss
+    ) {
       ctx.beginPath();
       ctx.lineWidth = "2";
       ctx.strokeStyle = "blue";
@@ -41,7 +47,12 @@ class DrawableObject {
       ctx.beginPath();
       ctx.lineWidth = "2";
       ctx.strokeStyle = "red";
-      ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.right - this.offset.left, this.height - this.offset.bottom - this.offset.top);
+      ctx.rect(
+        this.x + this.offset.left,
+        this.y + this.offset.top,
+        this.width - this.offset.right - this.offset.left,
+        this.height - this.offset.bottom - this.offset.top
+      );
       ctx.stroke();
     }
     if (this instanceof Coin) {
@@ -67,7 +78,12 @@ class DrawableObject {
 
   cleanup() {
     this.isActive = false;
+    this.clearIntervalsArray();
+    this.clearImagesCache();
+    this.clearCurrentLoadedImage();
+  }
 
+  clearIntervalsArray() {
     if (this.intervals && Array.isArray(this.intervals)) {
       this.intervals.forEach((interval) => {
         if (interval !== null && interval !== undefined) {
@@ -76,7 +92,9 @@ class DrawableObject {
       });
       this.intervals = [];
     }
+  }
 
+  clearImagesCache() {
     if (this.imageCache) {
       Object.keys(this.imageCache).forEach((key) => {
         const img = this.imageCache[key];
@@ -88,7 +106,9 @@ class DrawableObject {
       });
       this.imageCache = {};
     }
+  }
 
+  clearCurrentLoadedImage() {
     if (this.img) {
       this.img.src = "";
       this.img.onload = null;

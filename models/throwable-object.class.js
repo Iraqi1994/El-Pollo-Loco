@@ -49,25 +49,30 @@ class ThrowableObject extends MovableObject {
   }
 
   splash() {
-    if (!this.isSplashing) {
-      this.isSplashing = true;
-      this.splashStartTime = Date.now();
-      this.speedX = 0;
-      this.speedY = 0;
-      clearInterval(this.throwInterval);
+    if (this.isSplashing) return;
+    this.initializeSplash();
+    this.startSplashAnimation();
+  }
 
-      let splashFrame = 0;
-      this.splashInterval = setInterval(() => {
-        if (!this.isActive) return;
-        if (splashFrame < this.IMAGES_SPLASH.length) {
-          this.img = this.imageCache[this.IMAGES_SPLASH[splashFrame]];
-          splashFrame++;
-        } else {
-          clearInterval(this.splashInterval);
-        }
-      }, 50);
-      this.intervals.push(this.splashInterval);
-    }
+  initializeSplash() {
+    this.isSplashing = true;
+    this.splashStartTime = Date.now();
+    this.speedX = 0;
+    this.speedY = 0;
+    clearInterval(this.throwInterval);
+  }
+
+  startSplashAnimation() {
+    let splashFrame = 0;
+    this.splashInterval = setInterval(() => {
+      if (!this.isActive) return;
+      if (splashFrame < this.IMAGES_SPLASH.length) {
+        this.img = this.imageCache[this.IMAGES_SPLASH[splashFrame++]];
+      } else {
+        clearInterval(this.splashInterval);
+      }
+    }, 50);
+    this.intervals.push(this.splashInterval);
   }
 
   cleanup() {

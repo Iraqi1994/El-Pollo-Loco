@@ -112,17 +112,47 @@ class World {
 
   checkCollisions() {
     this.level.enemies.forEach((enemy) => {
-      if ((enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead && this.character.isJumpingOn(enemy)) {
-        enemy.die();
-        this.character.speedY = 8;
-      } else if (enemy instanceof Endboss && this.character.isJumpingOn(enemy) && !enemy.isDead()) {
-        enemy.hit(20);
-        this.character.speedY = 8;
-      } else if (this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead())) {
-        this.character.hit(5);
-        this.healthbar.setPercentage(this.character.energy);
-      }
+      this.handleEnemyCollision(enemy);
     });
+  }
+
+  handleEnemyCollision(enemy) {
+    if (this.isChickenJumpedOn(enemy)) {
+      this.handleChickenJumpKill(enemy);
+    } else if (this.isBossJumpedOn(enemy)) {
+      this.handleBossJump(enemy);
+    } else if (this.isCharacterTouchingEnemy(enemy)) {
+      this.handleCharacterDamage();
+    }
+  }
+
+  isChickenJumpedOn(enemy) {
+    return (enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead && this.character.isJumpingOn(enemy);
+  }
+
+  isBossJumpedOn(enemy) {
+    return enemy instanceof Endboss && this.character.isJumpingOn(enemy) && !enemy.isDead();
+  }
+
+  isCharacterTouchingEnemy(enemy) {
+    return (
+      this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead())
+    );
+  }
+
+  handleChickenJumpKill(enemy) {
+    enemy.die();
+    this.character.speedY = 8;
+  }
+
+  handleBossJump(enemy) {
+    enemy.hit(20);
+    this.character.speedY = 8;
+  }
+
+  handleCharacterDamage() {
+    this.character.hit(5);
+    this.healthbar.setPercentage(this.character.energy);
   }
 
   checkCollectibles() {
@@ -169,22 +199,27 @@ class World {
 
   removeDeadEnemies() {
     this.level.enemies = this.level.enemies.filter((enemy) => {
-      const isChickenDead = (enemy instanceof Chicken || enemy instanceof Chick) && enemy.chickenIsDead;
-      const isBossDead = enemy instanceof Endboss && enemy.isDead() && enemy.deathAnimationFinished;
-
-      if (isChickenDead || isBossDead) {
-        const timeSinceDeath = Date.now() - enemy.deathTime;
-        const shouldRemove = timeSinceDeath >= 1000;
-
-        if (shouldRemove && enemy.cleanup) {
-          enemy.cleanup();
-          if (enemy.world) enemy.world = null;
-        }
-
-        return !shouldRemove;
+      if (this.isEnemyDead(enemy)) {
+        return this.handleDeadEnemy(enemy);
       }
       return true;
     });
+  }
+
+  isEnemyDead(enemy) {
+    const isChickenDead = (enemy instanceof Chicken || enemy instanceof Chick) && enemy.chickenIsDead;
+    const isBossDead = enemy instanceof Endboss && enemy.isDead() && enemy.deathAnimationFinished;
+    return isChickenDead || isBossDead;
+  }
+
+  handleDeadEnemy(enemy) {
+    const timeSinceDeath = Date.now() - enemy.deathTime;
+    const shouldRemove = timeSinceDeath >= 1000;
+    if (shouldRemove && enemy.cleanup) {
+      enemy.cleanup();
+      if (enemy.world) enemy.world = null;
+    }
+    return !shouldRemove;
   }
 
   checkBottleEnemyCollisions() {
@@ -244,86 +279,83 @@ class World {
 
   cleanup() {
     this.isActive = false;
+    this.cleanupAnimation();
+    this.cleanupIntervals();
+    this.cleanupCanvas();
+    this.cleanupGameObjects();
+    this.cleanupLevel();
+    this.cleanupThrowableObjects();
+    this.nullifyReferences();
+  }
 
+  cleanupAnimation() {
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
+  }
 
+  cleanupIntervals() {
     this.intervals.forEach((interval) => clearInterval(interval));
     this.intervals = [];
+  }
 
+  cleanupCanvas() {
     if (this.ctx && this.canvas) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
+  }
 
-    if (this.character) {
-      if (this.character.cleanup) this.character.cleanup();
-      this.character.world = null;
-      this.character = null;
+  cleanupGameObjects() {
+    this.cleanupObject(this.character, true);
+    this.cleanupObject(this.healthbar);
+    this.cleanupObject(this.coinbar);
+    this.cleanupObject(this.salsabar);
+  }
+
+  cleanupObject(obj, hasWorld = false) {
+    if (obj) {
+      if (obj.cleanup) obj.cleanup();
+      if (hasWorld) obj.world = null;
+      return null;
     }
+  }
 
-    if (this.healthbar) {
-      if (this.healthbar.cleanup) this.healthbar.cleanup();
-      this.healthbar = null;
+  cleanupLevel() {
+    if (!this.level) return;
+    this.cleanupLevelArray(this.level.enemies, true);
+    this.cleanupLevelArray(this.level.clouds);
+    this.cleanupLevelArray(this.level.backgroundObjects);
+    this.cleanupLevelArray(this.level.coins);
+    this.cleanupLevelArray(this.level.throwableObjects);
+    this.level = null;
+  }
+
+  cleanupLevelArray(array, hasWorld = false) {
+    if (array) {
+      array.forEach((obj) => {
+        if (obj.cleanup) obj.cleanup();
+        if (hasWorld && obj.world) obj.world = null;
+      });
+      array.length = 0;
     }
-    if (this.coinbar) {
-      if (this.coinbar.cleanup) this.coinbar.cleanup();
-      this.coinbar = null;
-    }
-    if (this.salsabar) {
-      if (this.salsabar.cleanup) this.salsabar.cleanup();
-      this.salsabar = null;
-    }
+  }
 
-    if (this.level) {
-      if (this.level.enemies) {
-        this.level.enemies.forEach((enemy) => {
-          if (enemy.cleanup) enemy.cleanup();
-          if (enemy.world) enemy.world = null;
-        });
-        this.level.enemies = [];
-      }
-
-      if (this.level.clouds) {
-        this.level.clouds.forEach((cloud) => {
-          if (cloud.cleanup) cloud.cleanup();
-        });
-        this.level.clouds = [];
-      }
-
-      if (this.level.backgroundObjects) {
-        this.level.backgroundObjects.forEach((bg) => {
-          if (bg.cleanup) bg.cleanup();
-        });
-        this.level.backgroundObjects = [];
-      }
-
-      if (this.level.coins) {
-        this.level.coins.forEach((coin) => {
-          if (coin.cleanup) coin.cleanup();
-        });
-        this.level.coins = [];
-      }
-
-      if (this.level.throwableObjects) {
-        this.level.throwableObjects.forEach((obj) => {
-          if (obj.cleanup) obj.cleanup();
-        });
-        this.level.throwableObjects = [];
-      }
-
-      this.level = null;
-    }
-
+  cleanupThrowableObjects() {
     if (this.throwableObjects) {
       this.throwableObjects.forEach((obj) => {
         if (obj.cleanup) obj.cleanup();
       });
       this.throwableObjects = [];
     }
+  }
 
+  nullifyReferences() {
+    this.character = null;
+    this.healthbar = null;
+    this.coinbar = null;
+    this.salsabar = null;
     this.ctx = null;
     this.canvas = null;
     this.keyboard = null;

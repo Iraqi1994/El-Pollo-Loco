@@ -284,7 +284,9 @@ const toggleMute = () => {
     muteButton.style.opacity = "1";
   }
 };
+
 window.addEventListener("load", init);
+
 document.addEventListener("keydown", (e) => {
   if (!gameStarted) return;
 
