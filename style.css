@@ -297,7 +297,7 @@ h2 {
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  border: none;
+  border: 1px solid #ffd700;
   background-color: rgba(0, 0, 0, 0.4);
   color: #ffd700;
   font-family: "zabars", Arial, Helvetica, sans-serif;
@@ -338,7 +338,11 @@ h2 {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px), (max-height: 500px) {
+  body {
+    justify-content: center;
+  }
+
   canvas {
     width: 100%;
   }
@@ -503,11 +507,21 @@ h2 {
   margin-top: 40px;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px), (max-height: 500px) {
   canvas {
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: contain;
+  }
+
+  #canvasContainer {
+    width: 100vw;
     height: 100vh;
-    width: auto;
-    max-width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
   }
 
   h1 {
@@ -516,9 +530,37 @@ h2 {
 
   body {
     flex-direction: row;
+    overflow: hidden;
+  }
+
+  body:has(.impressum-container) {
+    flex-direction: column;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  body:has(.impressum-container) h1 {
+    display: block;
   }
 
   .impressum-link {
-    display: none;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    z-index: 1000;
+  }
+}
+
+@media (max-height: 485px) {
+  .ending-screen {
+    min-height: 300px;
+  }
+
+  .impressum-link {
+    left: 10%;
+    transform: translateX(0);
   }
 }

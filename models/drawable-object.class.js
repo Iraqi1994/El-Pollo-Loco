@@ -10,6 +10,7 @@ class DrawableObject {
   coinOffset = 52;
   intervals = [];
   isActive = true;
+  testingHitbox = false;
 
   loadImage(path) {
     this.img = new Image();
@@ -31,13 +32,7 @@ class DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (
-      this instanceof Character ||
-      this instanceof Chick ||
-      this instanceof Chicken ||
-      this instanceof ThrowableObject ||
-      this instanceof Endboss
-    ) {
+    if (this.testingHitbox && (this instanceof Character || this instanceof Chick || this instanceof Chicken || this instanceof ThrowableObject || this instanceof Endboss)) {
       ctx.beginPath();
       ctx.lineWidth = "2";
       ctx.strokeStyle = "blue";
@@ -47,15 +42,10 @@ class DrawableObject {
       ctx.beginPath();
       ctx.lineWidth = "2";
       ctx.strokeStyle = "red";
-      ctx.rect(
-        this.x + this.offset.left,
-        this.y + this.offset.top,
-        this.width - this.offset.right - this.offset.left,
-        this.height - this.offset.bottom - this.offset.top
-      );
+      ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.right - this.offset.left, this.height - this.offset.bottom - this.offset.top);
       ctx.stroke();
     }
-    if (this instanceof Coin) {
+    if (this.testingHitbox && this instanceof Coin) {
       ctx.beginPath();
       ctx.lineWidth = "2";
       ctx.strokeStyle = "blue";
