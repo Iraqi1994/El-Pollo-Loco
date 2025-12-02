@@ -98,6 +98,7 @@ class World {
     this.intervals.push(
       setInterval(() => {
         if (!this.isActive) return;
+        this.checkEnemySpawns();
         this.checkCollisions();
         this.checkThrowableObjects();
         this.checkCollectibles();
@@ -108,6 +109,16 @@ class World {
         this.checkGameEnd();
       }, 1000 / 60)
     );
+  }
+
+  checkEnemySpawns() {
+    this.level.enemies.forEach((enemy) => {
+      if (!enemy.hasSpawned && enemy.spawnTriggerX !== undefined) {
+        if (this.character.x >= enemy.spawnTriggerX) {
+          enemy.hasSpawned = true;
+        }
+      }
+    });
   }
 
   checkCollisions() {
@@ -135,9 +146,7 @@ class World {
   }
 
   isCharacterTouchingEnemy(enemy) {
-    return (
-      this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead())
-    );
+    return this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead());
   }
 
   handleChickenJumpKill(enemy) {
@@ -151,7 +160,7 @@ class World {
   }
 
   handleCharacterDamage() {
-    this.character.hit(5);
+    this.character.hit(20);
     this.healthbar.setPercentage(this.character.energy);
   }
 
