@@ -5,7 +5,7 @@ let gameStarted = false;
 let gameActive = false;
 let endScreenTimeout = null;
 let isMuted = false;
-let backgroundMusic = new Audio("audio/background_music/La_Cucaracha.mp3");
+let backgroundMusic = new Audio("./audio/background_music/La_Cucaracha.mp3");
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.03;
 
