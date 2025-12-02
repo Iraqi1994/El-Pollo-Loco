@@ -7,6 +7,9 @@ class MovableObject extends DrawableObject {
   lastHit = 0;
   gravityInterval;
 
+  /**
+   * Applies gravity physics to the object.
+   */
   applyGravity() {
     this.gravityInterval = setInterval(() => {
       if (!this.isActive) return;
@@ -18,6 +21,10 @@ class MovableObject extends DrawableObject {
     this.intervals.push(this.gravityInterval);
   }
 
+  /**
+   * Checks if object is above ground level.
+   * @returns {boolean} True if above ground.
+   */
   isAboveGround() {
     if (this instanceof ThrowableObject) {
       return true;
@@ -26,12 +33,18 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Moves the object to the right.
+   */
   moveRight() {
     this.x += this.speed;
     this.otherDirection = false;
     this.lastInputTime = Date.now();
   }
 
+  /**
+   * Moves the object to the left.
+   */
   moveLeft() {
     this.x -= this.speed;
     if (this instanceof Character) {
@@ -40,6 +53,10 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Plays an animation by cycling through image array.
+   * @param {string[]} images - Array of image paths.
+   */
   playAnimation(images) {
     let i = this.currentImage % images.length;
     let path = images[i];
@@ -47,11 +64,19 @@ class MovableObject extends DrawableObject {
     this.currentImage++;
   }
 
+  /**
+   * Makes the object jump.
+   */
   jump() {
     this.speedY = 25;
     this.lastInputTime = Date.now();
   }
 
+  /**
+   * Checks collision with another object using AABB or circle collision.
+   * @param {MovableObject} movableObject - Object to check collision with.
+   * @returns {boolean} True if colliding.
+   */
   isColliding(movableObject) {
     if (movableObject instanceof Coin) {
       return this.isCollidingWithCircle(movableObject);
@@ -64,6 +89,11 @@ class MovableObject extends DrawableObject {
     );
   }
 
+  /**
+   * Checks circular collision with coins.
+   * @param {Coin} coin - Coin object to check.
+   * @returns {boolean} True if colliding.
+   */
   isCollidingWithCircle(coin) {
     const charCenterX = this.x + this.offset.left + (this.width - this.offset.left - this.offset.right) / 2;
     const charCenterY = this.y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) / 2;
@@ -78,6 +108,11 @@ class MovableObject extends DrawableObject {
     return distance < coinRadius + charRadius;
   }
 
+  /**
+   * Checks if character is jumping on top of an enemy.
+   * @param {MovableObject} enemy - Enemy to check.
+   * @returns {boolean} True if jumping on enemy.
+   */
   isJumpingOn(enemy) {
     return (
       this.speedY < 0 &&
@@ -89,6 +124,10 @@ class MovableObject extends DrawableObject {
     );
   }
 
+  /**
+   * Reduces energy when hit.
+   * @param {number} damage - Damage amount to apply.
+   */
   hit(damage) {
     if (this instanceof Endboss && this.isAttacking) {
       return;
@@ -101,12 +140,20 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Checks if object was recently hurt (within 1 second).
+   * @returns {boolean} True if hurt recently.
+   */
   isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
     timePassed = timePassed / 1000;
     return timePassed < 1;
   }
 
+  /**
+   * Checks if energy is depleted.
+   * @returns {boolean} True if dead.
+   */
   isDead() {
     return this.energy === 0;
   }

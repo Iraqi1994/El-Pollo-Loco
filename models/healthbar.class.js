@@ -8,6 +8,9 @@ class Healthbar extends Statusbar {
     "../img/7_statusbars/1_statusbar/2_statusbar_health/green/100.png",
   ];
 
+  /**
+   * Creates the health status bar.
+   */
   constructor() {
     super();
     this.loadImage(this.IMAGES[5]);

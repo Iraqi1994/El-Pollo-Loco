@@ -21,6 +21,12 @@ class ThrowableObject extends MovableObject {
     "../img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png",
   ];
 
+  /**
+   * Creates a throwable bottle.
+   * @param {number} x - Starting x position.
+   * @param {number} y - Starting y position.
+   * @param {boolean} throwLeft - Direction to throw.
+   */
   constructor(x, y, throwLeft = false) {
     super().loadImage("../img/6_salsa_bottle/1_salsa_bottle_on_ground.png");
     this.loadImages(this.IMAGES_THROWING);
@@ -36,6 +42,9 @@ class ThrowableObject extends MovableObject {
     }
   }
 
+  /**
+   * Throws the bottle with arc physics.
+   */
   throw() {
     this.speedY = 20;
     this.applyGravity();
@@ -48,12 +57,18 @@ class ThrowableObject extends MovableObject {
     this.intervals.push(this.throwInterval);
   }
 
+  /**
+   * Triggers bottle splash animation.
+   */
   splash() {
     if (this.isSplashing) return;
     this.initializeSplash();
     this.startSplashAnimation();
   }
 
+  /**
+   * Sets up splash state.
+   */
   initializeSplash() {
     this.isSplashing = true;
     this.splashStartTime = Date.now();
@@ -62,6 +77,9 @@ class ThrowableObject extends MovableObject {
     clearInterval(this.throwInterval);
   }
 
+  /**
+   * Plays splash animation frames.
+   */
   startSplashAnimation() {
     let splashFrame = 0;
     this.splashInterval = setInterval(() => {

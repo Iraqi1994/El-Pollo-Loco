@@ -1,3 +1,7 @@
+/**
+ * Creates and returns level 1 with all entities.
+ * @returns {Level} Level instance.
+ */
 function createLevel1() {
   return new Level(
     [

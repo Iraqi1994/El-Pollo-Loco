@@ -19,6 +19,11 @@ class World {
   animationFrameId = null;
   isActive = true;
 
+  /**
+   * Creates the game world and initializes all entities.
+   * @param {HTMLCanvasElement} canvas - Game canvas element.
+   * @param {Keyboard} keyboard - Keyboard input handler.
+   */
   constructor(canvas, keyboard) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
@@ -29,11 +34,16 @@ class World {
     this.coinbar = new Coinbar();
     this.salsabar = new Salsabar();
     this.allCoins = this.level.coins.length;
+    this.collisionManager = new CollisionManager(this);
+    this.cleanupManager = new CleanupManager(this);
     this.draw();
     this.setWorld();
     this.run();
   }
 
+  /**
+   * Main render loop using requestAnimationFrame.
+   */
   draw() {
     if (!this.isActive) return;
 
@@ -56,12 +66,20 @@ class World {
     this.animationFrameId = requestAnimationFrame(() => this.draw());
   }
 
+  /**
+   * Renders an array of objects to the canvas.
+   * @param {DrawableObject[]} objects - Objects to render.
+   */
   addObjectsToMap(objects) {
     objects.forEach((object) => {
       this.addToMap(object);
     });
   }
 
+  /**
+   * Renders a single object, handling flipping for direction.
+   * @param {MovableObject} movableObject - Object to render.
+   */
   addToMap(movableObject) {
     if (movableObject.otherDirection) {
       this.flipImage(movableObject);
@@ -73,6 +91,10 @@ class World {
     }
   }
 
+  /**
+   * Flips canvas context for left-facing sprites.
+   * @param {MovableObject} movableObject - Object to flip.
+   */
   flipImage(movableObject) {
     this.ctx.save();
     this.ctx.translate(movableObject.width, 0);
@@ -80,11 +102,18 @@ class World {
     movableObject.x = movableObject.x * -1;
   }
 
+  /**
+   * Restores canvas context after flipping.
+   * @param {MovableObject} movableObject - Object to restore.
+   */
   flipImageBack(movableObject) {
     movableObject.x = movableObject.x * -1;
     this.ctx.restore();
   }
 
+  /**
+   * Sets world reference on character and endboss.
+   */
   setWorld() {
     this.character.world = this;
     this.level.enemies.forEach((enemy) => {
@@ -94,23 +123,29 @@ class World {
     });
   }
 
+  /**
+   * Starts the main game logic loop.
+   */
   run() {
     this.intervals.push(
       setInterval(() => {
         if (!this.isActive) return;
         this.checkEnemySpawns();
-        this.checkCollisions();
+        this.collisionManager.checkCollisions();
         this.checkThrowableObjects();
         this.checkCollectibles();
-        this.checkBottleEnemyCollisions();
-        this.removeDeadEnemies();
-        this.removeSplashedBottles();
+        this.collisionManager.checkBottleEnemyCollisions();
+        this.cleanupManager.removeDeadEnemies();
+        this.cleanupManager.removeSplashedBottles();
         this.checkBossActivation();
         this.checkGameEnd();
       }, 1000 / 60)
     );
   }
 
+  /**
+   * Activates enemies when character reaches spawn trigger.
+   */
   checkEnemySpawns() {
     this.level.enemies.forEach((enemy) => {
       if (!enemy.hasSpawned && enemy.spawnTriggerX !== undefined) {
@@ -121,49 +156,9 @@ class World {
     });
   }
 
-  checkCollisions() {
-    this.level.enemies.forEach((enemy) => {
-      this.handleEnemyCollision(enemy);
-    });
-  }
-
-  handleEnemyCollision(enemy) {
-    if (this.isChickenJumpedOn(enemy)) {
-      this.handleChickenJumpKill(enemy);
-    } else if (this.isBossJumpedOn(enemy)) {
-      this.handleBossJump(enemy);
-    } else if (this.isCharacterTouchingEnemy(enemy)) {
-      this.handleCharacterDamage();
-    }
-  }
-
-  isChickenJumpedOn(enemy) {
-    return (enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead && this.character.isJumpingOn(enemy);
-  }
-
-  isBossJumpedOn(enemy) {
-    return enemy instanceof Endboss && this.character.isJumpingOn(enemy) && !enemy.isDead();
-  }
-
-  isCharacterTouchingEnemy(enemy) {
-    return this.character.isColliding(enemy) && !enemy.chickenIsDead && !this.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead());
-  }
-
-  handleChickenJumpKill(enemy) {
-    enemy.die();
-    this.character.speedY = 8;
-  }
-
-  handleBossJump(enemy) {
-    enemy.hit(20);
-    this.character.speedY = 8;
-  }
-
-  handleCharacterDamage() {
-    this.character.hit(20);
-    this.healthbar.setPercentage(this.character.energy);
-  }
-
+  /**
+   * Checks and handles coin and bottle collection.
+   */
   checkCollectibles() {
     this.level.coins.forEach((coin, index) => {
       if (this.character.isColliding(coin)) {
@@ -182,6 +177,9 @@ class World {
     });
   }
 
+  /**
+   * Handles bottle throwing with cooldown.
+   */
   checkThrowableObjects() {
     const currentTime = Date.now();
     if (this.keyboard.D && this.character.bottles > 0 && currentTime - this.lastThrowTime > this.throwCooldown) {
@@ -196,73 +194,25 @@ class World {
     }
   }
 
+  /**
+   * Updates coin status bar percentage.
+   */
   updateCoinbar() {
     const percentage = (this.character.coins / this.allCoins) * 100;
     this.coinbar.setPercentage(percentage);
   }
 
+  /**
+   * Updates bottle status bar percentage.
+   */
   updateSalsabar() {
     const percentage = (this.character.bottles / this.maxBottles) * 100;
     this.salsabar.setPercentage(percentage);
   }
 
-  removeDeadEnemies() {
-    this.level.enemies = this.level.enemies.filter((enemy) => {
-      if (this.isEnemyDead(enemy)) {
-        return this.handleDeadEnemy(enemy);
-      }
-      return true;
-    });
-  }
-
-  isEnemyDead(enemy) {
-    const isChickenDead = (enemy instanceof Chicken || enemy instanceof Chick) && enemy.chickenIsDead;
-    const isBossDead = enemy instanceof Endboss && enemy.isDead() && enemy.deathAnimationFinished;
-    return isChickenDead || isBossDead;
-  }
-
-  handleDeadEnemy(enemy) {
-    const timeSinceDeath = Date.now() - enemy.deathTime;
-    const shouldRemove = timeSinceDeath >= 1000;
-    if (shouldRemove && enemy.cleanup) {
-      enemy.cleanup();
-      if (enemy.world) enemy.world = null;
-    }
-    return !shouldRemove;
-  }
-
-  checkBottleEnemyCollisions() {
-    this.throwableObjects.forEach((bottle) => {
-      this.level.enemies.forEach((enemy) => {
-        if (!bottle.isSplashing && bottle.isColliding(enemy)) {
-          if ((enemy instanceof Chicken || enemy instanceof Chick) && !enemy.chickenIsDead) {
-            bottle.splash();
-            enemy.die();
-          } else if (enemy instanceof Endboss && enemy.isActivated) {
-            bottle.splash();
-            enemy.hit(20);
-          }
-        }
-      });
-    });
-  }
-
-  removeSplashedBottles() {
-    this.throwableObjects = this.throwableObjects.filter((bottle) => {
-      if (bottle.isSplashing) {
-        const timeSinceSplash = Date.now() - bottle.splashStartTime;
-        const shouldRemove = timeSinceSplash >= 300;
-
-        if (shouldRemove && bottle.cleanup) {
-          bottle.cleanup();
-        }
-
-        return !shouldRemove;
-      }
-      return true;
-    });
-  }
-
+  /**
+   * Activates boss fight when character reaches boss area.
+   */
   checkBossActivation() {
     const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
     if (endboss && !endboss.isActivated) {
@@ -275,6 +225,9 @@ class World {
     }
   }
 
+  /**
+   * Checks win/lose conditions and shows ending screen.
+   */
   checkGameEnd() {
     if (this.character.isDead() && gameActive) {
       showEndingScreen(false);
@@ -286,87 +239,10 @@ class World {
     }
   }
 
+  /**
+   * Cleans up all world resources and intervals.
+   */
   cleanup() {
-    this.isActive = false;
-    this.cleanupAnimation();
-    this.cleanupIntervals();
-    this.cleanupCanvas();
-    this.cleanupGameObjects();
-    this.cleanupLevel();
-    this.cleanupThrowableObjects();
-    this.nullifyReferences();
-  }
-
-  cleanupAnimation() {
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
-  }
-
-  cleanupIntervals() {
-    this.intervals.forEach((interval) => clearInterval(interval));
-    this.intervals = [];
-  }
-
-  cleanupCanvas() {
-    if (this.ctx && this.canvas) {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-    }
-  }
-
-  cleanupGameObjects() {
-    this.cleanupObject(this.character, true);
-    this.cleanupObject(this.healthbar);
-    this.cleanupObject(this.coinbar);
-    this.cleanupObject(this.salsabar);
-  }
-
-  cleanupObject(obj, hasWorld = false) {
-    if (obj) {
-      if (obj.cleanup) obj.cleanup();
-      if (hasWorld) obj.world = null;
-      return null;
-    }
-  }
-
-  cleanupLevel() {
-    if (!this.level) return;
-    this.cleanupLevelArray(this.level.enemies, true);
-    this.cleanupLevelArray(this.level.clouds);
-    this.cleanupLevelArray(this.level.backgroundObjects);
-    this.cleanupLevelArray(this.level.coins);
-    this.cleanupLevelArray(this.level.throwableObjects);
-    this.level = null;
-  }
-
-  cleanupLevelArray(array, hasWorld = false) {
-    if (array) {
-      array.forEach((obj) => {
-        if (obj.cleanup) obj.cleanup();
-        if (hasWorld && obj.world) obj.world = null;
-      });
-      array.length = 0;
-    }
-  }
-
-  cleanupThrowableObjects() {
-    if (this.throwableObjects) {
-      this.throwableObjects.forEach((obj) => {
-        if (obj.cleanup) obj.cleanup();
-      });
-      this.throwableObjects = [];
-    }
-  }
-
-  nullifyReferences() {
-    this.character = null;
-    this.healthbar = null;
-    this.coinbar = null;
-    this.salsabar = null;
-    this.ctx = null;
-    this.canvas = null;
-    this.keyboard = null;
+    this.cleanupManager.cleanup();
   }
 }

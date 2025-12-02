@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/cleanup-manager.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/cleanup-manager.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Manages cleanup and removal of game entities.
+ */
+class CleanupManager {
+  /**
+   * Creates a cleanup manager.
+   * @param {World} world - Reference to the game world.
+   */
+  constructor(world) {
+    this.world = world;
+  }
+
+  /**
+   * Removes dead enemies after death animation delay.
+   */
+  removeDeadEnemies() {
+    this.world.level.enemies = this.world.level.enemies.filter((enemy) => {
+      if (this.isEnemyDead(enemy)) {
+        return this.handleDeadEnemy(enemy);
+      }
+      return true;
+    });
+  }
+
+  /**
+   * Checks if an enemy is dead.
+   * @param {MovableObject} enemy - Enemy to check.
+   * @returns {boolean} True if dead.
+   */
+  isEnemyDead(enemy) {
+    const isChickenDead = (enemy instanceof Chicken || enemy instanceof Chick) &amp;&amp; enemy.chickenIsDead;
+    const isBossDead = enemy instanceof Endboss &amp;&amp; enemy.isDead() &amp;&amp; enemy.deathAnimationFinished;
+    return isChickenDead || isBossDead;
+  }
+
+  /**
+   * Handles cleanup after enemy death delay.
+   * @param {MovableObject} enemy - Dead enemy.
+   * @returns {boolean} True if should keep in array.
+   */
+  handleDeadEnemy(enemy) {
+    const timeSinceDeath = Date.now() - enemy.deathTime;
+    const shouldRemove = timeSinceDeath >= 1000;
+    if (shouldRemove &amp;&amp; enemy.cleanup) {
+      enemy.cleanup();
+      if (enemy.world) enemy.world = null;
+    }
+    return !shouldRemove;
+  }
+
+  /**
+   * Removes splashed bottles after animation.
+   */
+  removeSplashedBottles() {
+    this.world.throwableObjects = this.world.throwableObjects.filter((bottle) => {
+      if (bottle.isSplashing) {
+        const timeSinceSplash = Date.now() - bottle.splashStartTime;
+        const shouldRemove = timeSinceSplash >= 300;
+
+        if (shouldRemove &amp;&amp; bottle.cleanup) {
+          bottle.cleanup();
+        }
+
+        return !shouldRemove;
+      }
+      return true;
+    });
+  }
+
+  /**
+   * Cleans up all world resources and intervals.
+   */
+  cleanup() {
+    this.world.isActive = false;
+    this.cleanupAnimation();
+    this.cleanupIntervals();
+    this.cleanupCanvas();
+    this.cleanupGameObjects();
+    this.cleanupLevel();
+    this.cleanupThrowableObjects();
+    this.nullifyReferences();
+  }
+
+  /**
+   * Cancels the animation frame loop.
+   */
+  cleanupAnimation() {
+    if (this.world.animationFrameId) {
+      cancelAnimationFrame(this.world.animationFrameId);
+      this.world.animationFrameId = null;
+    }
+  }
+
+  /**
+   * Clears all game logic intervals.
+   */
+  cleanupIntervals() {
+    this.world.intervals.forEach((interval) => clearInterval(interval));
+    this.world.intervals = [];
+  }
+
+  /**
+   * Clears and resets canvas.
+   */
+  cleanupCanvas() {
+    if (this.world.ctx &amp;&amp; this.world.canvas) {
+      this.world.ctx.clearRect(0, 0, this.world.canvas.width, this.world.canvas.height);
+      this.world.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+  }
+
+  /**
+   * Cleans up character and status bars.
+   */
+  cleanupGameObjects() {
+    this.cleanupObject(this.world.character, true);
+    this.cleanupObject(this.world.healthbar);
+    this.cleanupObject(this.world.coinbar);
+    this.cleanupObject(this.world.salsabar);
+  }
+
+  /**
+   * Cleans up a single object.
+   * @param {Object} obj - Object to clean.
+   * @param {boolean} hasWorld - If object has world reference.
+   * @returns {null}
+   */
+  cleanupObject(obj, hasWorld = false) {
+    if (obj) {
+      if (obj.cleanup) obj.cleanup();
+      if (hasWorld) obj.world = null;
+      return null;
+    }
+  }
+
+  /**
+   * Cleans up level and all its arrays.
+   */
+  cleanupLevel() {
+    if (!this.world.level) return;
+    this.cleanupLevelArray(this.world.level.enemies, true);
+    this.cleanupLevelArray(this.world.level.clouds);
+    this.cleanupLevelArray(this.world.level.backgroundObjects);
+    this.cleanupLevelArray(this.world.level.coins);
+    this.cleanupLevelArray(this.world.level.throwableObjects);
+    this.world.level = null;
+  }
+
+  /**
+   * Cleans up an array of level objects.
+   * @param {Array} array - Array to clean.
+   * @param {boolean} hasWorld - If objects have world reference.
+   */
+  cleanupLevelArray(array, hasWorld = false) {
+    if (array) {
+      array.forEach((obj) => {
+        if (obj.cleanup) obj.cleanup();
+        if (hasWorld &amp;&amp; obj.world) obj.world = null;
+      });
+      array.length = 0;
+    }
+  }
+
+  /**
+   * Cleans up thrown bottles array.
+   */
+  cleanupThrowableObjects() {
+    if (this.world.throwableObjects) {
+      this.world.throwableObjects.forEach((obj) => {
+        if (obj.cleanup) obj.cleanup();
+      });
+      this.world.throwableObjects = [];
+    }
+  }
+
+  /**
+   * Sets all object references to null.
+   */
+  nullifyReferences() {
+    this.world.character = null;
+    this.world.healthbar = null;
+    this.world.coinbar = null;
+    this.world.salsabar = null;
+    this.world.ctx = null;
+    this.world.canvas = null;
+    this.world.keyboard = null;
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Character.html">Character</a></li><li><a href="Chick.html">Chick</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="CleanupManager.html">CleanupManager</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="Coinbar.html">Coinbar</a></li><li><a href="CollisionManager.html">CollisionManager</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="Healthbar.html">Healthbar</a></li><li><a href="Level.html">Level</a></li><li><a href="Salsabar.html">Salsabar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#checkOrientation">checkOrientation</a></li><li><a href="global.html#createLevel1">createLevel1</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#returnToMenu">returnToMenu</a></li><li><a href="global.html#setupMobileControls">setupMobileControls</a></li><li><a href="global.html#showEndingScreen">showEndingScreen</a></li><li><a href="global.html#showInstructions">showInstructions</a></li><li><a href="global.html#showMainMenu">showMainMenu</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#toggleMute">toggleMute</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Dec 02 2025 17:46:43 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

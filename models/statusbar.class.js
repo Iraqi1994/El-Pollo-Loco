@@ -6,12 +6,20 @@ class Statusbar extends DrawableObject {
     super();
   }
 
+  /**
+   * Updates status bar based on percentage.
+   * @param {number} percentage - Value from 0-100.
+   */
   setPercentage(percentage) {
     this.percentage = percentage;
     const path = this.IMAGES[this.resolveImageIndex()];
     this.img = this.imageCache[path];
   }
 
+  /**
+   * Maps percentage to image index.
+   * @returns {number} Image array index.
+   */
   resolveImageIndex() {
     if (this.percentage == 100) return 5;
     else if (this.percentage >= 80) return 4;

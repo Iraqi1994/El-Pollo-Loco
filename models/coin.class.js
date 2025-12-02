@@ -2,6 +2,11 @@ class Coin extends DrawableObject {
   height = 150;
   width = 150;
 
+  /**
+   * Creates a collectible coin.
+   * @param {number} x - X position.
+   * @param {number} y - Y position.
+   */
   constructor(x, y) {
     super();
     this.loadImage("img/8_coin/coin_1.png");

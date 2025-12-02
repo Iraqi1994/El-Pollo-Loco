@@ -18,12 +18,7 @@ class Endboss extends MovableObject {
   warcrySound = new Audio("../audio/enemies/endboss_warcry.wav");
   attackSound = new Audio("../audio/enemies/endboss_attack.wav");
 
-  IMAGES_WALKING = [
-    "../img/4_enemie_boss_chicken/1_walk/G1.png",
-    "../img/4_enemie_boss_chicken/1_walk/G2.png",
-    "../img/4_enemie_boss_chicken/1_walk/G3.png",
-    "../img/4_enemie_boss_chicken/1_walk/G4.png",
-  ];
+  IMAGES_WALKING = ["../img/4_enemie_boss_chicken/1_walk/G1.png", "../img/4_enemie_boss_chicken/1_walk/G2.png", "../img/4_enemie_boss_chicken/1_walk/G3.png", "../img/4_enemie_boss_chicken/1_walk/G4.png"];
 
   IMAGES_ALERT = [
     "../img/4_enemie_boss_chicken/2_alert/G5.png",
@@ -47,18 +42,13 @@ class Endboss extends MovableObject {
     "../img/4_enemie_boss_chicken/3_attack/G20.png",
   ];
 
-  IMAGES_HURT = [
-    "../img/4_enemie_boss_chicken/4_hurt/G21.png",
-    "../img/4_enemie_boss_chicken/4_hurt/G22.png",
-    "../img/4_enemie_boss_chicken/4_hurt/G23.png",
-  ];
+  IMAGES_HURT = ["../img/4_enemie_boss_chicken/4_hurt/G21.png", "../img/4_enemie_boss_chicken/4_hurt/G22.png", "../img/4_enemie_boss_chicken/4_hurt/G23.png"];
 
-  IMAGES_DEAD = [
-    "../img/4_enemie_boss_chicken/5_dead/G24.png",
-    "../img/4_enemie_boss_chicken/5_dead/G25.png",
-    "../img/4_enemie_boss_chicken/5_dead/G26.png",
-  ];
+  IMAGES_DEAD = ["../img/4_enemie_boss_chicken/5_dead/G24.png", "../img/4_enemie_boss_chicken/5_dead/G25.png", "../img/4_enemie_boss_chicken/5_dead/G26.png"];
 
+  /**
+   * Creates the endboss with all animations.
+   */
   constructor() {
     super().loadImage("../img/4_enemie_boss_chicken/2_alert/G5.png");
     this.loadImages(this.IMAGES_ALERT);
@@ -75,6 +65,9 @@ class Endboss extends MovableObject {
     this.startMoving();
   }
 
+  /**
+   * Handles boss animation states.
+   */
   animate() {
     this.intervals.push(
       setInterval(() => {
@@ -96,6 +89,9 @@ class Endboss extends MovableObject {
     );
   }
 
+  /**
+   * Starts boss movement within boundaries.
+   */
   startMoving() {
     this.intervals.push(
       setInterval(() => {
@@ -120,6 +116,10 @@ class Endboss extends MovableObject {
     );
   }
 
+  /**
+   * Activates boss fight and sets boundaries.
+   * @param {number} cameraX - Current camera x position.
+   */
   activate(cameraX) {
     if (!this.isActivated) {
       this.leftBoundary = -cameraX;
@@ -136,6 +136,10 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Plays death animation once without looping.
+   * @param {string[]} images - Death animation frames.
+   */
   playDeathAnimation(images) {
     if (!this.deathAnimationStarted) {
       this.currentImage = 0;
@@ -152,6 +156,9 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Initiates attack sequence.
+   */
   startAttack() {
     if (!this.isAttacking) {
       this.isAttacking = true;
@@ -162,6 +169,9 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Plays attack animation with timing.
+   */
   playAttackAnimation() {
     if (!this.attackAnimationStarted) {
       this.initializeAttackAnimation();
@@ -169,6 +179,9 @@ class Endboss extends MovableObject {
     this.updateAttackAnimation();
   }
 
+  /**
+   * Initializes attack animation and plays sound.
+   */
   initializeAttackAnimation() {
     this.currentImage = 0;
     this.attackAnimationStarted = true;
@@ -178,6 +191,9 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Updates attack animation based on timing.
+   */
   updateAttackAnimation() {
     const animationDuration = this.IMAGES_ATTACK.length * 200 * 2;
     const timeSinceAttackStart = Date.now() - this.attackStartTime;
@@ -188,6 +204,10 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Plays attack frames and handles damage timing.
+   * @param {number} timeSinceAttackStart - Time since attack began.
+   */
   playAttackFrames(timeSinceAttackStart) {
     const previousImage = this.currentImage;
     this.playAnimation(this.IMAGES_ATTACK);
@@ -195,6 +215,10 @@ class Endboss extends MovableObject {
     this.handleAttackDamage(timeSinceAttackStart);
   }
 
+  /**
+   * Replays attack sound on animation loop.
+   * @param {number} previousImage - Previous image index.
+   */
   handleAttackSound(previousImage) {
     if (!isMuted && previousImage > this.currentImage) {
       this.attackSound.currentTime = 0;
@@ -202,6 +226,10 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Applies damage during attack window.
+   * @param {number} timeSinceAttackStart - Time since attack began.
+   */
   handleAttackDamage(timeSinceAttackStart) {
     const damageWindow = 200 * 4;
     const isInDamageWindow = timeSinceAttackStart >= damageWindow && timeSinceAttackStart < damageWindow + 200;
@@ -212,11 +240,18 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Ends attack state.
+   */
   endAttack() {
     this.isAttacking = false;
     this.attackAnimationStarted = false;
   }
 
+  /**
+   * Checks if character is in front of boss.
+   * @returns {boolean} True if character is in attack range.
+   */
   isCharacterInFront() {
     if (!this.world) return false;
     const character = this.world.character;
@@ -228,6 +263,9 @@ class Endboss extends MovableObject {
     }
   }
 
+  /**
+   * Cleans up boss resources and timeout.
+   */
   cleanup() {
     if (this.activationTimeout) {
       clearTimeout(this.activationTimeout);

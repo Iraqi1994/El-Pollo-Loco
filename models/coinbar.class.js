@@ -8,6 +8,9 @@ class Coinbar extends Statusbar {
     "../img/7_statusbars/1_statusbar/1_statusbar_coin/blue/100.png",
   ];
 
+  /**
+   * Creates the coin status bar.
+   */
   constructor() {
     super();
     this.loadImage(this.IMAGES[0]);

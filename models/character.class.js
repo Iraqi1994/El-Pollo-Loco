@@ -23,11 +23,7 @@ class Character extends MovableObject {
     "../img/2_character_pepe/3_jump/J-39.png",
   ];
 
-  IMAGES_HURT = [
-    "../img/2_character_pepe/4_hurt/H-41.png",
-    "../img/2_character_pepe/4_hurt/H-42.png",
-    "../img/2_character_pepe/4_hurt/H-43.png",
-  ];
+  IMAGES_HURT = ["../img/2_character_pepe/4_hurt/H-41.png", "../img/2_character_pepe/4_hurt/H-42.png", "../img/2_character_pepe/4_hurt/H-43.png"];
 
   IMAGES_DEAD = [
     "../img/2_character_pepe/5_dead/D-51.png",
@@ -76,6 +72,9 @@ class Character extends MovableObject {
   isWalking = false;
   isSnoring = false;
 
+  /**
+   * Creates the main character with animations and sounds.
+   */
   constructor() {
     super().loadImage("../img/2_character_pepe/2_walk/W-21.png");
     this.loadImages(this.IMAGES_WALKING);
@@ -109,6 +108,9 @@ class Character extends MovableObject {
     this.stopSnoringSound();
   }
 
+  /**
+   * Initializes all animation and movement intervals.
+   */
   animate() {
     this.intervals.push(this.setBasicMovements());
     this.intervals.push(this.setBasicAnimationIntervals());
@@ -116,6 +118,10 @@ class Character extends MovableObject {
     this.intervals.push(this.animateJumping());
   }
 
+  /**
+   * Sets up movement controls interval.
+   * @returns {number} Interval ID.
+   */
   setBasicMovements() {
     setInterval(() => {
       if (gameActive && this.isActive && this.world) {
@@ -133,6 +139,10 @@ class Character extends MovableObject {
     }, 1000 / 60);
   }
 
+  /**
+   * Sets up basic animation interval (walk, hurt, dead).
+   * @returns {number} Interval ID.
+   */
   setBasicAnimationIntervals() {
     setInterval(() => {
       if (gameActive && this.isActive && this.world) {
@@ -149,6 +159,10 @@ class Character extends MovableObject {
     }, 50);
   }
 
+  /**
+   * Handles idle and sleeping animations.
+   * @returns {number} Interval ID.
+   */
   startIdle() {
     setInterval(() => {
       if (this.shouldPlayIdleAnimation()) {
@@ -166,6 +180,10 @@ class Character extends MovableObject {
     }, 250);
   }
 
+  /**
+   * Handles jumping animation.
+   * @returns {number} Interval ID.
+   */
   animateJumping() {
     setInterval(() => {
       if (gameActive && this.isActive && this.isAboveGround()) {
@@ -174,6 +192,9 @@ class Character extends MovableObject {
     }, 125);
   }
 
+  /**
+   * Plays walking animation and footstep sound.
+   */
   animateWalking() {
     if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
       this.playAnimation(this.IMAGES_WALKING);
@@ -183,24 +204,26 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Updates camera position to follow character.
+   */
   setCameraWhenBossNotActive() {
     if (!this.world.isBossActive) {
       this.world.camera_x = -this.x + 70;
     }
   }
 
+  /**
+   * Checks if idle animation should play.
+   * @returns {boolean} True if should play idle.
+   */
   shouldPlayIdleAnimation() {
-    return (
-      gameActive &&
-      this.isActive &&
-      this.world &&
-      !this.isAboveGround() &&
-      !this.isDead() &&
-      !this.isHurt() &&
-      !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT)
-    );
+    return gameActive && this.isActive && this.world && !this.isAboveGround() && !this.isDead() && !this.isHurt() && !(this.world.keyboard.RIGHT || this.world.keyboard.LEFT);
   }
 
+  /**
+   * Increments coin count and plays sound.
+   */
   collectCoin() {
     this.coins++;
     if (!isMuted) {
@@ -209,10 +232,16 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Increments bottle count.
+   */
   collectBottle() {
     this.bottles++;
   }
 
+  /**
+   * Starts playing footstep audio loop.
+   */
   playFootstepSound() {
     if (!this.isWalking && !isMuted) {
       this.footstepSound.play().catch(() => {});
@@ -220,6 +249,9 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Stops footstep audio.
+   */
   stopFootstepSound() {
     if (this.isWalking) {
       this.footstepSound.pause();
@@ -228,6 +260,9 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Starts playing snoring audio loop.
+   */
   playSnoringSound() {
     if (!this.isSnoring && !isMuted) {
       this.snoringSound.play().catch(() => {});
@@ -235,6 +270,9 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Stops snoring audio.
+   */
   stopSnoringSound() {
     if (this.isSnoring) {
       this.snoringSound.pause();
@@ -243,6 +281,10 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Gets the left movement boundary (for boss room).
+   * @returns {number} Left boundary x position.
+   */
   getLeftBoundary() {
     if (!this.world || !this.world.level) return 0;
     const endboss = this.world.level.enemies.find((enemy) => enemy instanceof Endboss);
@@ -253,6 +295,10 @@ class Character extends MovableObject {
     return 0;
   }
 
+  /**
+   * Gets the right movement boundary.
+   * @returns {number} Right boundary x position.
+   */
   getRightBoundary() {
     if (!this.world || !this.world.level) return 3500;
     const endboss = this.world.level.enemies.find((enemy) => enemy instanceof Endboss);

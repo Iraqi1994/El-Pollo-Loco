@@ -8,6 +8,9 @@ class Salsabar extends Statusbar {
     "../img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/100.png",
   ];
 
+  /**
+   * Creates the bottle status bar.
+   */
   constructor() {
     super();
     this.loadImage(this.IMAGES[0]);

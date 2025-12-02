@@ -9,6 +9,9 @@ let backgroundMusic = new Audio("audio/background_music/La_Cucaracha.mp3");
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.03;
 
+/**
+ * Initializes the game, sets up event listeners and checks orientation.
+ */
 const init = () => {
   canvas = document.getElementById("canvas");
   const startButton = document.getElementById("startButton");
@@ -39,6 +42,9 @@ const init = () => {
   window.addEventListener("orientationchange", checkOrientation);
 };
 
+/**
+ * Checks device orientation and shows warning on mobile portrait mode.
+ */
 const checkOrientation = () => {
   const orientationWarning = document.getElementById("orientationWarning");
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 720;
@@ -51,6 +57,9 @@ const checkOrientation = () => {
   }
 };
 
+/**
+ * Sets up touch event listeners for mobile control buttons.
+ */
 const setupMobileControls = () => {
   const btnLeft = document.getElementById("btnLeft");
   const btnRight = document.getElementById("btnRight");
@@ -158,16 +167,25 @@ const setupMobileControls = () => {
   }
 };
 
+/**
+ * Displays the instructions screen.
+ */
 const showInstructions = () => {
   document.getElementById("mainMenu").classList.add("hidden");
   document.getElementById("instructionsView").classList.remove("hidden");
 };
 
+/**
+ * Shows the main menu screen.
+ */
 const showMainMenu = () => {
   document.getElementById("mainMenu").classList.remove("hidden");
   document.getElementById("instructionsView").classList.add("hidden");
 };
 
+/**
+ * Starts a new game instance.
+ */
 const startGame = () => {
   if (gameActive) return;
 
@@ -192,6 +210,9 @@ const startGame = () => {
   world = new World(canvas, keyboard);
 };
 
+/**
+ * Restarts the game after game over.
+ */
 const restartGame = () => {
   gameActive = false;
 
@@ -221,6 +242,9 @@ const restartGame = () => {
   world = new World(canvas, keyboard);
 };
 
+/**
+ * Returns to main menu from game over screen.
+ */
 const returnToMenu = () => {
   gameActive = false;
   gameStarted = false;
@@ -249,6 +273,10 @@ const returnToMenu = () => {
   document.getElementById("startScreen").classList.remove("hidden");
   showMainMenu();
 };
+/**
+ * Displays the ending screen with win/lose message.
+ * @param {boolean} won - True if player won, false if lost.
+ */
 const showEndingScreen = (won) => {
   gameActive = false;
 
@@ -272,6 +300,9 @@ const showEndingScreen = (won) => {
   }, 1000);
 };
 
+/**
+ * Toggles audio mute state and saves to localStorage.
+ */
 const toggleMute = () => {
   isMuted = !isMuted;
   backgroundMusic.muted = isMuted;

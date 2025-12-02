@@ -8,6 +8,11 @@ class Chicken extends MovableObject {
   deathTime = 0;
   deathSound = new Audio("../audio/enemies/chicken_dead.wav");
 
+  /**
+   * Creates a chicken enemy.
+   * @param {number} x - Spawn x position.
+   * @param {number|null} spawnTriggerX - Character x that triggers spawn.
+   */
   constructor(x, spawnTriggerX = null) {
     super().loadImage("../img/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
     this.loadImages(this.IMAGES_WALKING);
@@ -21,11 +26,18 @@ class Chicken extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Starts movement and animation intervals.
+   */
   animate() {
     this.intervals.push(this.startMoving());
     this.intervals.push(this.setBasicAnimationIntervals());
   }
 
+  /**
+   * Starts the movement interval.
+   * @returns {number} Interval ID.
+   */
   startMoving() {
     setInterval(() => {
       if (gameActive && this.isActive && !this.chickenIsDead && this.hasSpawned) {
@@ -34,6 +46,10 @@ class Chicken extends MovableObject {
     }, 1000 / 60);
   }
 
+  /**
+   * Animates walking or death.
+   * @returns {number} Interval ID.
+   */
   setBasicAnimationIntervals() {
     setInterval(() => {
       if (gameActive && this.isActive) {
@@ -46,6 +62,9 @@ class Chicken extends MovableObject {
     }, 200);
   }
 
+  /**
+   * Marks chicken as dead and plays sound.
+   */
   die() {
     this.chickenIsDead = true;
     this.deathTime = Date.now();
