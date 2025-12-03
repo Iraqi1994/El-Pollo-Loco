@@ -12,6 +12,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   font-family: "zabars", Arial, Helvetica, sans-serif;
   background-image: url("./img/background_image/desert_background.png");
   background-size: cover;
@@ -70,12 +71,6 @@ canvas {
   display: block;
 }
 
-h1 {
-  font-size: 64px;
-  letter-spacing: 3px;
-  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
-}
-
 h2 {
   letter-spacing: 3px;
 }
@@ -87,10 +82,18 @@ h2 {
   width: 720px;
   max-width: 100vw;
   min-height: 480px;
+  max-height: 90vh;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.start-screen::-webkit-scrollbar {
+  display: none;
 }
 
 .start-content {
@@ -156,6 +159,7 @@ h2 {
   border-radius: 10px;
   padding: 20px;
   margin-top: 30px;
+  margin-bottom: 20px;
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
@@ -185,10 +189,6 @@ h2 {
 
 .instructions-title-spacing {
   margin-top: 25px;
-}
-
-.back-button-spacing {
-  margin-top: 20px;
 }
 
 .restart-button-spacing {
@@ -347,10 +347,6 @@ h2 {
     width: 100%;
   }
 
-  h1 {
-    font-size: 48px;
-  }
-
   .start-content h2 {
     font-size: 36px;
   }
@@ -444,7 +440,6 @@ h2 {
 
 .impressum-container {
   max-width: 800px;
-  width: 90%;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 15px;
   padding: 40px;
@@ -524,10 +519,6 @@ h2 {
     background-color: #000;
   }
 
-  h1 {
-    display: none;
-  }
-
   body {
     flex-direction: row;
     overflow: hidden;
@@ -542,6 +533,10 @@ h2 {
 
   body:has(.impressum-container) h1 {
     display: block;
+  }
+
+  body:has(#canvasContainer:not(.hidden)) .impressum-link {
+    display: none;
   }
 
   .impressum-link {
