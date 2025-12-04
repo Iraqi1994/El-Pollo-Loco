@@ -10,7 +10,6 @@ class DrawableObject {
   coinOffset = 52;
   intervals = [];
   isActive = true;
-  testingHitbox = false;
 
   /**
    * Loads a single image from the given path.
@@ -40,45 +39,6 @@ class DrawableObject {
   draw(ctx) {
     if (this.img && this.img.complete && this.img.naturalHeight !== 0) {
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    }
-  }
-
-  /**
-   * Draws debug hitbox frames for testing.
-   * @param {CanvasRenderingContext2D} ctx - Canvas rendering context.
-   */
-  drawFrame(ctx) {
-    if (this.testingHitbox && (this instanceof Character || this instanceof Chick || this instanceof Chicken || this instanceof ThrowableObject || this instanceof Endboss)) {
-      ctx.beginPath();
-      ctx.lineWidth = "2";
-      ctx.strokeStyle = "blue";
-      ctx.rect(this.x, this.y, this.width, this.height);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.lineWidth = "2";
-      ctx.strokeStyle = "red";
-      ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.right - this.offset.left, this.height - this.offset.bottom - this.offset.top);
-      ctx.stroke();
-    }
-    if (this.testingHitbox && this instanceof Coin) {
-      ctx.beginPath();
-      ctx.lineWidth = "2";
-      ctx.strokeStyle = "blue";
-      const centerX = this.x + this.width / 2;
-      const centerY = this.y + this.height / 2;
-      const radius = this.width / 2;
-      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.lineWidth = "2";
-      ctx.strokeStyle = "red";
-      const offsetCenterX = this.x + this.width / 2;
-      const offsetCenterY = this.y + this.height / 2;
-      const offsetRadius = this.width / 2 - this.coinOffset;
-      ctx.arc(offsetCenterX, offsetCenterY, offsetRadius, 0, 2 * Math.PI);
-      ctx.stroke();
     }
   }
 
