@@ -106,6 +106,9 @@ class Character extends MovableObject {
     super.hit(damage);
     this.lastInputTime = Date.now();
     this.stopSnoringSound();
+    if (this.isDead()) {
+      this.stopFootstepSound();
+    }
   }
 
   /**
@@ -123,7 +126,7 @@ class Character extends MovableObject {
    * @returns {number} Interval ID.
    */
   setBasicMovements() {
-    setInterval(() => {
+    return setInterval(() => {
       if (gameActive && this.isActive && this.world) {
         if (this.world.keyboard.RIGHT && this.x + this.width - this.offset.right < this.getRightBoundary()) {
           this.moveRight();
@@ -144,11 +147,12 @@ class Character extends MovableObject {
    * @returns {number} Interval ID.
    */
   setBasicAnimationIntervals() {
-    setInterval(() => {
+    return setInterval(() => {
       if (gameActive && this.isActive && this.world) {
         if (this.isDead()) {
           this.playAnimation(this.IMAGES_DEAD);
           this.stopFootstepSound();
+          this.stopSnoringSound();
         } else if (this.isHurt()) {
           this.playAnimation(this.IMAGES_HURT);
           this.stopFootstepSound();
@@ -164,7 +168,7 @@ class Character extends MovableObject {
    * @returns {number} Interval ID.
    */
   startIdle() {
-    setInterval(() => {
+    return setInterval(() => {
       if (this.shouldPlayIdleAnimation()) {
         const timeSinceLastInput = Date.now() - this.lastInputTime;
         if (timeSinceLastInput > 15000) {
@@ -185,8 +189,8 @@ class Character extends MovableObject {
    * @returns {number} Interval ID.
    */
   animateJumping() {
-    setInterval(() => {
-      if (gameActive && this.isActive && this.isAboveGround()) {
+    return setInterval(() => {
+      if (gameActive && this.isActive && this.isAboveGround() && !this.isDead() && !this.isHurt()) {
         this.playAnimation(this.IMAGES_JUMPING);
       }
     }, 125);
@@ -196,7 +200,7 @@ class Character extends MovableObject {
    * Plays walking animation and footstep sound.
    */
   animateWalking() {
-    if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround()) {
+    if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.isAboveGround() && !this.isDead()) {
       this.playAnimation(this.IMAGES_WALKING);
       this.playFootstepSound();
     } else {
@@ -307,5 +311,32 @@ class Character extends MovableObject {
       return endboss.rightBoundary;
     }
     return this.world.level.level_end_x;
+  }
+
+  /**
+   * Stops all audio and cleans up character resources.
+   */
+  cleanup() {
+    this.stopAllAudio();
+    super.cleanup();
+  }
+
+  /**
+   * Stops and cleans up all audio elements.
+   */
+  stopAllAudio() {
+    this.stopFootstepSound();
+    this.stopSnoringSound();
+
+    const audioElements = [this.footstepSound, this.collectCoinSound, this.jumpSound, this.snoringSound];
+
+    audioElements.forEach((audio) => {
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = "";
+        audio.load();
+      }
+    });
   }
 }
