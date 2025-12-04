@@ -1,7 +1,7 @@
 class Endboss extends MovableObject {
-  height = 250;
-  width = 180;
-  y = 200;
+  height = 200;
+  width = 150;
+  y = 230;
   speed = 5;
   deathAnimationFinished = false;
   deathAnimationStarted = false;
@@ -195,7 +195,7 @@ class Endboss extends MovableObject {
    * Updates attack animation based on timing.
    */
   updateAttackAnimation() {
-    const animationDuration = this.IMAGES_ATTACK.length * 200 * 2;
+    const animationDuration = this.IMAGES_ATTACK.length * 200;
     const timeSinceAttackStart = Date.now() - this.attackStartTime;
     if (timeSinceAttackStart < animationDuration) {
       this.playAttackFrames(timeSinceAttackStart);

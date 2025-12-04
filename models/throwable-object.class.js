@@ -46,7 +46,7 @@ class ThrowableObject extends MovableObject {
    * Throws the bottle with arc physics.
    */
   throw() {
-    this.speedY = 20;
+    this.speedY = 15;
     this.applyGravity();
     this.throwInterval = setInterval(() => {
       if (this.isActive && !this.isSplashing) {
