@@ -231,7 +231,7 @@ class World {
     if (this.character.isDead() && gameActive) {
       showEndingScreen(false);
     }
-
+    if (!this.level) return;
     const endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
     if (endboss && endboss.isDead() && endboss.deathAnimationFinished && gameActive) {
       showEndingScreen(true);

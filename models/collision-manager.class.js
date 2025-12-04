@@ -57,7 +57,10 @@ class CollisionManager {
    * @returns {boolean} True if touching.
    */
   isCharacterTouchingEnemy(enemy) {
-    return this.world.character.isColliding(enemy) && !enemy.chickenIsDead && !this.world.character.isHurt() && !(enemy instanceof Endboss && enemy.isDead());
+    if (enemy instanceof Endboss) {
+      return this.world.character.isColliding(enemy) && !this.world.character.isHurt() && !enemy.isDead() && enemy.isAttacking;
+    }
+    return this.world.character.isColliding(enemy) && !enemy.chickenIsDead && !this.world.character.isHurt();
   }
 
   /**
