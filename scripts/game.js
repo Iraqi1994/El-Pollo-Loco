@@ -6,28 +6,41 @@ const keyMap = {
   Space: "SPACE",
   KeyD: "D",
 };
-let canvas;
+const canvas = document.getElementById("canvas");
 let world;
-let keyboard = new Keyboard();
+const keyboard = new Keyboard();
 let gameStarted = false;
 let gameActive = false;
 let endScreenTimeout = null;
 let isMuted = false;
-let backgroundMusic = new Audio("./audio/background_music/La_Cucaracha.mp3");
+const backgroundMusic = new Audio("./audio/background_music/La_Cucaracha.mp3");
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.03;
+const startButton = document.getElementById("startButton");
+const instructionsButton = document.getElementById("instructionsButton");
+const backButton = document.getElementById("backButton");
+const restartButton = document.getElementById("restartButton");
+const returnButton = document.getElementById("returnButton");
+const muteButton = document.getElementById("muteButton");
 
 /**
  * Initializes the game, sets up event listeners and checks orientation.
  */
 const init = () => {
-  canvas = document.getElementById("canvas");
-  const startButton = document.getElementById("startButton");
-  const instructionsButton = document.getElementById("instructionsButton");
-  const backButton = document.getElementById("backButton");
-  const restartButton = document.getElementById("restartButton");
-  const returnButton = document.getElementById("returnButton");
-  const muteButton = document.getElementById("muteButton");
+  loadMutedState();
+  addEventListenerToButtons();
+  setupMobileControls();
+  checkOrientation();
+  window.addEventListener("resize", checkOrientation);
+  window.addEventListener("orientationchange", checkOrientation);
+  document.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("keyup", handleKeyUp);
+};
+
+/**
+ * Loads the muted state from localStorage and applies it.
+ */
+const loadMutedState = () => {
   const savedMutedState = localStorage.getItem("isMuted");
   if (savedMutedState !== null) {
     isMuted = savedMutedState === "true";
@@ -36,18 +49,18 @@ const init = () => {
       muteButton.style.opacity = "0.5";
     }
   }
+};
 
+/**
+ * Adds click event listeners to all menu and control buttons.
+ */
+const addEventListenerToButtons = () => {
   startButton.addEventListener("click", startGame);
   instructionsButton.addEventListener("click", showInstructions);
   backButton.addEventListener("click", showMainMenu);
   restartButton.addEventListener("click", restartGame);
   returnButton.addEventListener("click", returnToMenu);
   muteButton.addEventListener("click", toggleMute);
-
-  setupMobileControls();
-  checkOrientation();
-  window.addEventListener("resize", checkOrientation);
-  window.addEventListener("orientationchange", checkOrientation);
 };
 
 /**
@@ -55,10 +68,12 @@ const init = () => {
  */
 const checkOrientation = () => {
   const orientationWarning = document.getElementById("orientationWarning");
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 720;
+  const isMobile = window.innerWidth <= 720;
+  const isTabletSize = window.innerWidth >= 720 && window.innerWidth <= 1366;
+  const hasTouch = navigator.maxTouchPoints > 0;
   const isPortrait = window.innerHeight > window.innerWidth;
 
-  if (isMobile && isPortrait) {
+  if ((isMobile || (isTabletSize && hasTouch)) && isPortrait) {
     orientationWarning.classList.remove("hidden");
   } else {
     orientationWarning.classList.add("hidden");
@@ -244,6 +259,11 @@ const showEndingScreen = (won) => {
   }, 1000);
 };
 
+/**
+ * Sets the appropriate ending image based on win/lose state.
+ * @param {boolean} won - True if player won, false if lost.
+ * @param {HTMLImageElement} endingImage - The image element to update.
+ */
 const setEndscreenImage = (won, endingImage) => {
   if (won) {
     endingImage.src = "./img/You won, you lost/You won A.png";
@@ -269,8 +289,6 @@ const toggleMute = () => {
   }
 };
 
-window.addEventListener("load", init);
-
 /**
  * Handles keyboard key press events.
  * @param {KeyboardEvent} e - Keyboard event.
@@ -291,5 +309,4 @@ const handleKeyUp = (e) => {
   if (key) keyboard[key] = false;
 };
 
-document.addEventListener("keydown", handleKeyDown);
-document.addEventListener("keyup", handleKeyUp);
+init();

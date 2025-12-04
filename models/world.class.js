@@ -6,6 +6,7 @@ class World {
   keyboard;
   camera_x = 0;
   healthbar;
+  healthbarBoss;
   coinbar;
   salsabar;
   throwableObjects = [];
@@ -30,7 +31,8 @@ class World {
     this.keyboard = keyboard;
     this.character = new Character();
     this.level = createLevel1();
-    this.healthbar = new Healthbar();
+    this.healthbar = new Healthbar(20);
+    this.healthbarBoss = new Healthbar(450);
     this.coinbar = new Coinbar();
     this.salsabar = new Salsabar();
     this.allCoins = this.level.coins.length;
@@ -56,6 +58,9 @@ class World {
     this.addToMap(this.healthbar);
     this.addToMap(this.coinbar);
     this.addToMap(this.salsabar);
+    if (this.isBossActive) {
+      this.addToMap(this.healthbarBoss);
+    }
     this.ctx.translate(this.camera_x, 0);
     this.addToMap(this.character);
     this.addObjectsToMap(this.level.enemies);

@@ -78,6 +78,7 @@ class CollisionManager {
    */
   handleBossJump(enemy) {
     enemy.hit(20);
+    this.world.healthbarBoss.setPercentage(enemy.energy);
     this.world.character.speedY = 8;
   }
 
@@ -102,6 +103,7 @@ class CollisionManager {
           } else if (enemy instanceof Endboss && enemy.isActivated) {
             bottle.splash();
             enemy.hit(20);
+            this.world.healthbarBoss.setPercentage(enemy.energy);
           }
         }
       });

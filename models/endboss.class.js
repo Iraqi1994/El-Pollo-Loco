@@ -97,23 +97,37 @@ class Endboss extends MovableObject {
       setInterval(() => {
         if (gameActive && this.isActive && !this.isDead() && this.isActivated && !this.isAttacking) {
           if (this.movingRight) {
-            this.moveRight();
-            this.otherDirection = true;
-            if (this.x + this.width >= this.rightBoundary) {
-              this.startAttack();
-              this.movingRight = false;
-            }
+            this.handleMoveRight();
           } else {
-            this.moveLeft();
-            this.otherDirection = false;
-            if (this.x <= this.leftBoundary) {
-              this.startAttack();
-              this.movingRight = true;
-            }
+            this.handleMoveLeft();
           }
         }
       }, 1000 / 60)
     );
+  }
+
+  /**
+   * Handles rightward movement and boundary check.
+   */
+  handleMoveRight() {
+    this.moveRight();
+    this.otherDirection = true;
+    if (this.x + this.width >= this.rightBoundary) {
+      this.startAttack();
+      this.movingRight = false;
+    }
+  }
+
+  /**
+   * Handles leftward movement and boundary check.
+   */
+  handleMoveLeft() {
+    this.moveLeft();
+    this.otherDirection = false;
+    if (this.x <= this.leftBoundary) {
+      this.startAttack();
+      this.movingRight = true;
+    }
   }
 
   /**

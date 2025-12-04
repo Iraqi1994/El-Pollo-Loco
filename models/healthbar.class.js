@@ -11,11 +11,11 @@ class Healthbar extends Statusbar {
   /**
    * Creates the health status bar.
    */
-  constructor() {
+  constructor(x) {
     super();
     this.loadImage(this.IMAGES[5]);
     this.loadImages(this.IMAGES);
-    this.x = 20;
+    this.x = x;
     this.y = 0;
     this.width = 200;
     this.height = 60;

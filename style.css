@@ -7,7 +7,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100vh;
-  overflow: auto;
+  overflow: hidden;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -438,14 +438,26 @@ h2 {
   transform: translateX(-50%) scale(1.1);
 }
 
+.start-screen:has(#instructionsView:not(.hidden)) ~ .impressum-link {
+  display: none;
+}
+
 .impressum-container {
   max-width: 800px;
+  max-height: 90vh;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 15px;
   padding: 40px;
   margin: 20px auto;
   color: white;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.impressum-container::-webkit-scrollbar {
+  display: none;
 }
 
 .impressum-container h1 {
@@ -526,13 +538,30 @@ h2 {
 
   body:has(.impressum-container) {
     flex-direction: column;
-    overflow-y: auto;
-    height: auto;
+    overflow: hidden;
+    height: 100vh;
     min-height: 100vh;
+    position: fixed;
+    width: 100vw;
   }
 
   body:has(.impressum-container) h1 {
     display: block;
+  }
+
+  body:has(.impressum-container) .impressum-container {
+    max-height: 100vh;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .impressum-container p,
+  .impressum-container h2 {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   body:has(#canvasContainer:not(.hidden)) .impressum-link {
@@ -552,10 +581,5 @@ h2 {
 @media (max-height: 485px) {
   .ending-screen {
     min-height: 300px;
-  }
-
-  .impressum-link {
-    left: 10%;
-    transform: translateX(0);
   }
 }
